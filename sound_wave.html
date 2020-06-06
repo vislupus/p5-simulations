@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.js"></script>
+    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.js"></script>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            margin: 4.15px 0;
+        }
+
+        input[type=range]:focus {
+            outline: none;
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6.7px;
+            cursor: pointer;
+            box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+            background: #ffffff;
+            border-radius: 1.3px;
+            border: 0.2px solid #010101;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            box-shadow: 0.9px 0.9px 1px #000000, 0px 0px 0.9px #0d0d0d;
+            border: 1.1px solid #000000;
+            height: 15px;
+            width: 40px;
+            border-radius: 50px;
+            background: red;
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -4.35px;
+        }
+
+        input[type=range]:focus::-webkit-slider-runnable-track {
+            background: #ffffff;
+        }
+
+    </style>
+</head>
+
+<body>
+    <script>
+        var sliderT;
+        var sliderN;
+
+        let t = 0;
+        let row = 15;
+
+        let array = [];
+
+        function setup() {
+            createCanvas(600, 500);
+
+            sliderT = createSlider(0, 0.2, 0.07, 0.001);
+            sliderT.position(25, 30);
+            sliderT.style('width', '550px');
+
+            sliderN = createSlider(0, 100, 30, 1);
+            sliderN.position(25, 80);
+            sliderN.style('width', '550px');
+
+            for (let j = 0; j < row; j += 1) {
+                array[j] = [];
+            }
+
+            for (let j = 0; j < row; j += 1) {
+                for (let i = 0; i < row; i += 1) {
+                    array[j][i] = new Ellipse(j * 40 + 20, i * 20 + 130);
+                }
+            }
+        }
+
+        function draw() {
+            background(220);
+
+            t += sliderT.value();
+            
+            amplitude=sliderT.value();
+            text('Amplitude: '+amplitude, 30, 20);
+            
+            wavelength=sliderN.value();
+            text('Wavelength: '+wavelength, 30, 70);
+
+            for (let j = 0; j < row; j += 1) {
+                for (let i = 0; i < row; i += 1) {
+                    array[j][i].display();
+                    array[j][i].update(t, j);
+                }
+            }
+        }
+
+        class Ellipse {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+            }
+
+            display() {
+                ellipse(this.x, this.y, 15, 15);
+            }
+
+            update(t, n) {
+                this.x += sin(n * sliderN.value() - t);
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>

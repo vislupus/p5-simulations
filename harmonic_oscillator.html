@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.js"></script>
+    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.js"></script>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            margin: 4.15px 0;
+        }
+
+        input[type=range]:focus {
+            outline: none;
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6.7px;
+            cursor: pointer;
+            box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+            background: #ffffff;
+            border-radius: 1.3px;
+            border: 0.2px solid #010101;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            box-shadow: 0.9px 0.9px 1px #000000, 0px 0px 0.9px #0d0d0d;
+            border: 1.1px solid #000000;
+            height: 15px;
+            width: 40px;
+            border-radius: 50px;
+            background: red;
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -4.35px;
+        }
+
+        input[type=range]:focus::-webkit-slider-runnable-track {
+            background: #ffffff;
+        }
+
+    </style>
+</head>
+
+<body>
+    <script>
+        //        x = A cos(omega0t + phi)
+
+        let x = 0.1; //displacement
+        let k = 0.2; //spring constant
+        let m = 25; //mass
+        let A = 200; //amplitude
+        let phi = 0; //phase
+        let omega0; //natural frequency
+
+        let step = 1;
+        let totalWidthWave;
+        
+        var sliderK;
+        var sliderM;
+        var sliderA;
+
+        function setup() {
+            createCanvas(800, 600);
+            
+            sliderA = createSlider(1, 150, 120, 1);
+            sliderA.position(25, 30);
+            sliderA.style('width', '250px');
+            
+            sliderK = createSlider(0, 2, 0.1, 0.01);
+            sliderK.position(25, 80);
+            sliderK.style('width', '250px');
+               
+            sliderM = createSlider(1, 500, 25, 1);
+            sliderM.position(25, 130);
+            sliderM.style('width', '250px');
+        }
+
+        function draw() {
+            background(220);
+
+            grid();
+            
+            noStroke();
+            textSize(16);
+            
+            A=sliderA.value();
+            text('Amplitude: '+A, 30, 20);
+            
+            k=sliderK.value();
+            text('Spring constant: '+k, 30, 70);
+            
+            m=sliderM.value();
+            text('Mass: '+m, 30, 120);
+            
+            omega0=sqrt(k/m);
+            
+            calcWave();
+            renderWave();
+        }
+
+        function grid() {
+            stroke('#000000');
+            fill('#000000');
+            strokeWeight(1);
+
+            for (let i = 0; i < width; i += 20) {
+                line(i, 0, i, height);
+            }
+
+            for (let j = 0; j < height; j += 20) {
+                line(0, j, width, j);
+            }
+
+            strokeWeight(3);
+            line(width / 2, 0, width / 2, height);
+            line(0, height / 2, width, height / 2);
+        }
+
+        function calcWave() {
+            totalWidthWave = width + 26;
+            yvalues = new Array(floor(totalWidthWave / step));
+
+            for (let t = 0; t < yvalues.length; t++) {
+                if(omega0==0){
+                    yvalues[t] = 0;
+                }else{
+                    yvalues[t] = A*cos(omega0*t+phi);
+                }
+            }
+        }
+
+        function renderWave(x, y) {
+            noFill();
+            stroke("red");
+            strokeJoin(ROUND);
+            
+            beginShape();
+            for (let x = 0; x < yvalues.length; x += 1) {
+                vertex(x*step, yvalues[x]+height/2);
+            }
+            endShape();
+        }
+
+    </script>
+
+</body>
+
+</html>

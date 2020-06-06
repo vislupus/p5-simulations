@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.js"></script>
+    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.js"></script>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            margin: 4.15px 0;
+        }
+
+        input[type=range]:focus {
+            outline: none;
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6.7px;
+            cursor: pointer;
+            box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+            background: #ffffff;
+            border-radius: 1.3px;
+            border: 0.2px solid #010101;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            box-shadow: 0.9px 0.9px 1px #000000, 0px 0px 0.9px #0d0d0d;
+            border: 1.1px solid #000000;
+            height: 15px;
+            width: 40px;
+            border-radius: 50px;
+            background: #4d94ff;
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -4.35px;
+        }
+
+        input[type=range]:focus::-webkit-slider-runnable-track {
+            background: #ffffff;
+        }
+
+    </style>
+</head>
+
+<body>
+    <script>
+        var aaa = [];
+        var slider;
+
+        function setup() {
+            createCanvas(600, 600);
+
+            slider = createSlider(20, 50, 50, 1);
+            slider.position(380, 10);
+            slider.style('width', '200px');
+        }
+
+        function draw() {
+            background(220);
+
+            grid();
+
+            strokeWeight(1);
+            fill('rgba(255, 204, 0, 0.5)');
+            ellipse(width / 2, height / 2, 100, 100);
+            fill('#000');
+            ellipse(width / 2, height / 2, 5, 5);
+
+            fill('rgba(153, 204, 255, 0.5)');
+            ellipse(mouseX, mouseY, slider.value(), slider.value());
+            fill('#000');
+            ellipse(mouseX, mouseY, 5, 5);
+
+            //            line(mouseX, mouseY, width / 2, height / 2);
+
+            strokeWeight(1);
+            fill(color("red"));
+            textSize(22);
+            text(areaOfIntersection(width / 2, height / 2, 100 / 2, mouseX, mouseY, slider.value() / 2), 25, 25);
+
+            aaa.push(areaOfIntersection(width / 2, height / 2, 100 / 2, mouseX, mouseY, slider.value() / 2));
+
+            if (aaa.length > 620) {
+                aaa = [];
+            }
+
+            noFill();
+//            stroke('rgba(255, 204, 0, 0.5)');
+            beginShape();
+            for (let i = 0; i < aaa.length; i += 1) {
+                vertex(i, height + (aaa[i] / 10) - 200);
+//                vertex(i - 10, height);
+            }
+            endShape();
+        }
+
+        function grid() {
+            stroke('#000000');
+            fill('#000000');
+            strokeWeight(1);
+
+            for (let i = 0; i < width; i += 30) {
+                line(i, 0, i, height);
+            }
+
+            for (let j = 0; j < height; j += 30) {
+                line(0, j, width, j);
+            }
+
+            strokeWeight(3);
+            line(width / 2, 0, width / 2, height);
+            line(0, height / 2, width, height / 2);
+        }
+
+        function areaOfIntersection(x0, y0, r0, x1, y1, r1) {
+            var rr0 = r0 * r0;
+            var rr1 = r1 * r1;
+            var d = Math.sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0));
+
+            // Circles do not overlap
+            if (d > r1 + r0) {
+                return 0;
+            }
+
+            // Circle1 is completely inside circle0
+            else if (d <= Math.abs(r0 - r1) && r0 >= r1) {
+                // Return area of circle1
+                return Math.PI * rr1;
+            }
+
+            // Circle0 is completely inside circle1
+            else if (d <= Math.abs(r0 - r1) && r0 < r1) {
+                // Return area of circle0
+                return Math.PI * rr0;
+            }
+
+            // Circles partially overlap
+            else {
+                var phi = (Math.acos((rr0 + (d * d) - rr1) / (2 * r0 * d))) * 2;
+                var theta = (Math.acos((rr1 + (d * d) - rr0) / (2 * r1 * d))) * 2;
+                var area1 = 0.5 * theta * rr1 - 0.5 * rr1 * Math.sin(theta);
+                var area2 = 0.5 * phi * rr0 - 0.5 * rr0 * Math.sin(phi);
+
+                // Return area of intersection
+                return area1 + area2;
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>
