@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+		<style>
+			body {
+				padding: 0;
+				margin: 0;
+			}
+		</style>
+	</head>
+
+	<body>
+		<script>
+			var w = [];
+			var array = [];
+
+			function setup() {
+				createCanvas(500, 400);
+
+				for (let i = 0; i < 10; i++) {
+					w[i] = new Walker();
+					w[i].num = i;
+					array.push([]);
+				}
+			}
+
+			function draw() {
+				background(200);
+
+				for (let i = 0; i < w.length; i++) {
+					w[i].update();
+					w[i].display();
+				}
+
+				for (let i = 0; i < array.length; i++) {
+					noFill();
+					beginShape();
+					for (let j = 0; j < array[i].length; j++) {
+						if (array[i].length > 1000) {
+							array[i].splice(0, 1);
+						}
+						stroke(array[i][j].r, array[i][j].g, array[i][j].b);
+
+						vertex(array[i][j].x, array[i][j].y);
+					}
+					endShape();
+				}
+			}
+
+			class Walker {
+				constructor() {
+					this.pos = createVector(random(50, width - 50), random(50, height - 50));
+					this.step = random(0.01, 0.02);
+					this.num = 0;
+					this.r = random(10, 255);
+					this.g = random(10, 255);
+					this.b = random(10, 255);
+				}
+
+				update() {
+					this.vel = createVector(random(-5, 5), random(-5, 5));
+
+					this.pos.add(this.vel);
+
+					array[this.num].push({
+						x: this.pos.x,
+						y: this.pos.y,
+						step: this.step,
+						r: this.r,
+						g: this.g,
+						b: this.b,
+					});
+				}
+
+				display() {
+					stroke(0);
+					fill(this.r, this.g, this.b);
+					ellipse(this.pos.x, this.pos.y, 10, 10);
+				}
+			}
+		</script>
+	</body>
+</html>
