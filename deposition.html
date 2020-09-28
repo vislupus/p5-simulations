@@ -1,230 +1,221 @@
 <!DOCTYPE html>
 <html>
+	<head>
+		<script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.js"></script>
+		<script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.js"></script>
+		<style>
+			body {
+				padding: 0;
+				margin: 0;
+			}
 
-<head>
-    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.js"></script>
-    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.js"></script>
-    <style>
-        body {
-            padding: 0;
-            margin: 0;
-        }
+			input[type="range"] {
+				-webkit-appearance: none;
+				width: 100%;
+				margin: 4.15px 0;
+			}
 
-        input[type=range] {
-            -webkit-appearance: none;
-            width: 100%;
-            margin: 4.15px 0;
-        }
+			input[type="range"]:focus {
+				outline: none;
+			}
 
-        input[type=range]:focus {
-            outline: none;
-        }
+			input[type="range"]::-webkit-slider-runnable-track {
+				width: 100%;
+				height: 6.7px;
+				cursor: pointer;
+				box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+				background: #ffffff;
+				border-radius: 1.3px;
+				border: 0.2px solid #010101;
+			}
 
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 6.7px;
-            cursor: pointer;
-            box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-            background: #ffffff;
-            border-radius: 1.3px;
-            border: 0.2px solid #010101;
-        }
+			input[type="range"]::-webkit-slider-thumb {
+				box-shadow: 0.9px 0.9px 1px #000000, 0px 0px 0.9px #0d0d0d;
+				border: 1.1px solid #000000;
+				height: 15px;
+				width: 40px;
+				border-radius: 50px;
+				background: red;
+				cursor: pointer;
+				-webkit-appearance: none;
+				margin-top: -4.35px;
+			}
 
-        input[type=range]::-webkit-slider-thumb {
-            box-shadow: 0.9px 0.9px 1px #000000, 0px 0px 0.9px #0d0d0d;
-            border: 1.1px solid #000000;
-            height: 15px;
-            width: 40px;
-            border-radius: 50px;
-            background: red;
-            cursor: pointer;
-            -webkit-appearance: none;
-            margin-top: -4.35px;
-        }
+			input[type="range"]:focus::-webkit-slider-runnable-track {
+				background: #ffffff;
+			}
+		</style>
+	</head>
 
-        input[type=range]:focus::-webkit-slider-runnable-track {
-            background: #ffffff;
-        }
+	<body>
+		<script>
+			let balls = [];
+			let path = [];
+			var dom = {
+				r: 500,
+				n: 5,
+				array: [],
+				cal_x: 200,
+				cal_y: 50,
+				m: 0,
+			};
 
-    </style>
-</head>
+			function setup() {
+				createCanvas(400, 400);
+				//            frameRate(1);
 
-<body>
-    <script>
-        let balls = [];
-        let path = [];
-        var dom = {
-            r: 500,
-            n: 5,
-            array: [],
-            cal_x: 200,
-            cal_y: 50,
-            m:0
-        }
+				dom.slider = createSlider(500, 2100, 500, 100);
+				dom.slider.position(10, 5);
+				dom.slider.style("width", "380px");
+				dom.slider.changed(reDraw);
 
+				for (let i = 0; i < height; i += dom.n) {
+					dom.array[i / dom.n] = [];
+					for (let j = 0; j < width; j += dom.n) {
+						dom.array[i / dom.n].push(0);
+					}
+				}
 
-        function setup() {
-            createCanvas(400, 400);
-            //            frameRate(1);
+				reDraw();
+			}
 
-            dom.slider = createSlider(500, 2100, 500, 100);
-            dom.slider.position(10, 5);
-            dom.slider.style('width', '380px');
-            dom.slider.changed(reDraw);
+			function draw() {
+				background(0);
 
-            for (let i = 0; i < height; i += dom.n) {
-                dom.array[i / dom.n] = [];
-                for (let j = 0; j < width; j += dom.n) {
-                    dom.array[i / dom.n].push(0);
-                }
-            }
+				for (let i = 0; i < dom.array.length; i += 1) {
+					for (let j = 0; j < dom.array.length; j += 1) {
+						if (dom.array[i][j] == 0) {
+							noFill();
+						} else if (dom.array[i][j] == 1) {
+							fill("#ffffff");
+						} else if (dom.array[i][j] == 2) {
+							fill("yellow");
+						}
 
-            reDraw();
-        }
+						stroke("#ffffff");
+						strokeWeight(0.3);
 
-        function draw() {
-            background(0);
+						rect(i * dom.n, j * dom.n, dom.n, dom.n);
+					}
+				}
 
-            for (let i = 0; i < dom.array.length; i += 1) {
-                for (let j = 0; j < dom.array.length; j += 1) {
-                    if (dom.array[i][j] == 0) {
-                        noFill();
-                    } else if (dom.array[i][j] == 1) {
-                        fill('#ffffff');
-                    } else if (dom.array[i][j] == 2) {
-                        fill('yellow');
-                    }
+				noStroke();
+				textSize(16);
+				fill("#ffffff");
 
-                    stroke('#ffffff');
-                    strokeWeight(0.3);
+				dom.r = dom.slider.value();
 
-                    rect(i * dom.n, j * dom.n, dom.n, dom.n);
-                }
-            }
+				if (dom.r == 2100) {
+					dom.r = 100000000;
+				}
 
-            noStroke();
-            textSize(16);
-            fill('#ffffff');
+				text("radius: " + dom.r, 170, 40);
 
-            dom.r = dom.slider.value();
+				stroke("#ffffff");
+				line(200, 0, 200, 400);
 
-            if (dom.r == 2100) {
-                dom.r = 100000000;
-            }
+				//            for (let i = 125; i < 235; i += 0.5) {
+				//                let y = dom.originY + cos(i * PI / 180) * dom.r / 2;
+				//                let x = dom.originX + sin(i * PI / 180) * dom.r / 2;
+				//
+				//                stroke('white');
+				//                line(dom.originX, dom.originY, x, y);
+				//                fill('red');
+				//                ellipse(x, y, 10, 10);
+				//            }
 
-            text('radius: ' + dom.r, 170, 40);
+				for (let b of balls) {
+					b.update();
+					b.show();
 
-            stroke('#ffffff');
-            line(200, 0, 200, 400);
+					if ((balls.length > 0 && b.pos.y < 0) || b.pos.x < -2 || b.pos.x > width + 2) {
+						dom.array[b.previousPos.x][b.previousPos.y] = 0;
+						balls.splice(balls.indexOf(b), 1);
+					}
 
-            //            for (let i = 125; i < 235; i += 0.5) {
-            //                let y = dom.originY + cos(i * PI / 180) * dom.r / 2;
-            //                let x = dom.originX + sin(i * PI / 180) * dom.r / 2;
-            //
-            //                stroke('white');
-            //                line(dom.originX, dom.originY, x, y);
-            //                fill('red');
-            //                ellipse(x, y, 10, 10);
-            //            }
+					if (b.pos.x < width + 20 && b.pos.x > -20 && parseInt(b.pos.x / dom.n) < width / dom.n && parseInt(b.pos.x / dom.n) >= 0 && parseInt(b.pos.y / dom.n) < height / dom.n && parseInt(b.pos.y / dom.n) >= 0) {
+						if (dom.array[parseInt(b.pos.x / dom.n)][parseInt(b.pos.y / dom.n)] != 1) {
+							dom.array[parseInt(b.pos.x / dom.n)][parseInt(b.pos.y / dom.n)] = 2;
 
-            for (let b of balls) {
-                b.update();
-                b.show();
+							dom.array[b.previousPos.x][b.previousPos.y] = 0;
 
-                if (balls.length > 0 && b.pos.y < 0 || b.pos.x < -2 || b.pos.x > width+2) {
-                    dom.array[b.previousPos.x][b.previousPos.y] = 0;
-                    balls.splice(balls.indexOf(b), 1);
-                }
+							b.previousPos.x = parseInt(b.pos.x / dom.n);
+							b.previousPos.y = parseInt(b.pos.y / dom.n);
+						} else {
+							dom.array[b.previousPos.x][b.previousPos.y] = 1;
+							balls.splice(balls.indexOf(b), 1);
+						}
+					}
+				}
+			}
 
-                if (b.pos.x < width + 20 && b.pos.x > -20 && parseInt(b.pos.x / dom.n) < width / dom.n && parseInt(b.pos.x / dom.n) >= 0 && parseInt(b.pos.y / dom.n) < height / dom.n && parseInt(b.pos.y / dom.n) >= 0) {
-                    if (dom.array[parseInt(b.pos.x / dom.n)][parseInt(b.pos.y / dom.n)] != 1) {
-                        dom.array[parseInt(b.pos.x / dom.n)][parseInt(b.pos.y / dom.n)] = 2;
+			function mousePressed() {
+				if (balls.length == 0) {
+					dom.m = 0;
+				}
 
-                        dom.array[b.previousPos.x][b.previousPos.y] = 0;
+				for (let i = 0; i < 11; i++) {
+					balls[dom.m] = new Ball(width / 2, height - 10, 1, (i + 5) * 9);
+					dom.m++;
+				}
+			}
 
-                        b.previousPos.x = parseInt(b.pos.x / dom.n);
-                        b.previousPos.y = parseInt(b.pos.y / dom.n);
-                    } else {
-                        dom.array[b.previousPos.x][b.previousPos.y] = 1;
-                        balls.splice(balls.indexOf(b), 1);
-                    }
+			function reDraw() {
+				for (let i = 0; i < height; i += dom.n) {
+					dom.array[i / dom.n] = [];
+					for (let j = 0; j < width; j += dom.n) {
+						dom.array[i / dom.n].push(0);
+					}
+				}
 
-                }
-            }
-        }
+				dom.originY = dom.cal_y + (sin(PI / 2) * dom.r) / 2;
+				dom.originX = dom.cal_x + (cos(PI / 2) * dom.r) / 2;
 
-        function mousePressed() {
-            if(balls.length==0){
-                dom.m=0;
-            }
-            
-            for (let i = 0; i < 11; i++) {
-                balls[dom.m] = new Ball(width / 2, height - 10, 1, (i + 5) * 9);
-                dom.m++;
-            }
-        }
+				//            console.log("x: " + dom.originX)
+				//            console.log("y: " + dom.originY)
 
-        function reDraw() {
-            for (let i = 0; i < height; i += dom.n) {
-                dom.array[i / dom.n] = [];
-                for (let j = 0; j < width; j += dom.n) {
-                    dom.array[i / dom.n].push(0);
-                }
-            }
+				fill("#ffffff");
+				ellipse(dom.originX, dom.originY, 10, 10);
+				stroke("red");
+				noFill();
+				strokeWeight(1);
+				ellipse(dom.originX, dom.originY, dom.r, dom.r);
 
-            dom.originY = dom.cal_y + sin(PI / 2) * dom.r / 2;
-            dom.originX = dom.cal_x + cos(PI / 2) * dom.r / 2;
+				for (let i = 125; i < 235; i += 0.2) {
+					dom.y = dom.originY + (cos((i * PI) / 180) * dom.r) / 2;
+					dom.x = dom.originX + (sin((i * PI) / 180) * dom.r) / 2;
 
-            //            console.log("x: " + dom.originX)
-            //            console.log("y: " + dom.originY)
+					if (dom.x < width + 20 && dom.x > -20 && parseInt(dom.x / dom.n) < width / dom.n && parseInt(dom.x / dom.n) >= 0 && parseInt(dom.y / dom.n) < height / dom.n && parseInt(dom.y / dom.n) >= 0) {
+						//                    console.log("x: " + parseInt(dom.x / dom.n))
+						//                    console.log("y: " + parseInt(dom.y / dom.n))
 
-            fill('#ffffff');
-            ellipse(dom.originX, dom.originY, 10, 10);
-            stroke('red');
-            noFill();
-            strokeWeight(1);
-            ellipse(dom.originX, dom.originY, dom.r, dom.r);
+						dom.array[parseInt(dom.x / dom.n)][parseInt(dom.y / dom.n)] = 1;
+					}
+				}
+			}
 
+			class Ball {
+				constructor(x, y, r, a) {
+					this.pos = createVector(x, y);
+					this.previousPos = createVector(x / dom.n, y / dom.n);
+					this.vel = createVector(0, 0);
+					this.vel = p5.Vector.fromAngle(radians(a) * -1, 5);
+					this.r = r;
+				}
 
-            for (let i = 125; i < 235; i += 0.2) {
-                dom.y = dom.originY + cos(i * PI / 180) * dom.r / 2;
-                dom.x = dom.originX + sin(i * PI / 180) * dom.r / 2;
+				update() {
+					this.pos.add(this.vel);
+				}
 
-                if (dom.x < width + 20 && dom.x > -20 && parseInt(dom.x / dom.n) < width / dom.n && parseInt(dom.x / dom.n) >= 0 && parseInt(dom.y / dom.n) < height / dom.n && parseInt(dom.y / dom.n) >= 0) {
-                    //                    console.log("x: " + parseInt(dom.x / dom.n))
-                    //                    console.log("y: " + parseInt(dom.y / dom.n))
-
-                    dom.array[parseInt(dom.x / dom.n)][parseInt(dom.y / dom.n)] = 1;
-
-                }
-            }
-        }
-
-        class Ball {
-            constructor(x, y, r, a) {
-                this.pos = createVector(x, y);
-                this.previousPos = createVector(x / dom.n, y / dom.n);
-                this.vel = createVector(0, 0);
-                this.vel = p5.Vector.fromAngle(radians(a) * -1, 5);
-                this.r = r;
-            }
-
-            update() {
-                this.pos.add(this.vel);
-            }
-
-            show() {
-                noStroke();
-//                stroke(255);
-//                strokeWeight(2);
-                //                fill(color(200, 200, 200, 80));
-                noFill();
-                ellipse(this.pos.x, this.pos.y, this.r);
-            }
-        }
-
-    </script>
-
-</body>
-
+				show() {
+					noStroke();
+					//                stroke(255);
+					//                strokeWeight(2);
+					//                fill(color(200, 200, 200, 80));
+					noFill();
+					ellipse(this.pos.x, this.pos.y, this.r);
+				}
+			}
+		</script>
+	</body>
 </html>

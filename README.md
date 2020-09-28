@@ -3,7 +3,7 @@ This repository contains a variety of simulations on different topics built with
 
 Inspiration for most of them came from the work of [Daniel Shiffman](http://twitter.com/shiffman) and his channel on Youtube call [The Coding Train](https://www.youtube.com/channel/UCvjgXvBlbQiydffZU7m1_aw).
 
-- [Random walkers](https://vislupus.github.io/p5-simulations/random_walkers_random.html)
+- [Random walkers](https://vislupus.github.io/p5-simulations/random_walkers.html)
 - [Random walkers with Perlin noise](https://vislupus.github.io/p5-simulations/random_walkers_perlin_noise.html)
 - [Applying forces to a ball with mass](https://vislupus.github.io/p5-simulations/ball_apply_force_and_mass_mult.html)
 - [Cannonball shooting](https://vislupus.github.io/p5-simulations/ball_cannon.html)

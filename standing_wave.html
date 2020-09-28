@@ -1,151 +1,146 @@
 <!DOCTYPE html>
 <html>
+	<head>
+		<script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.js"></script>
+		<script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.js"></script>
+		<style>
+			body {
+				padding: 0;
+				margin: 0;
+			}
 
-<head>
-    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.js"></script>
-    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.js"></script>
-    <style>
-        body {
-            padding: 0;
-            margin: 0;
-        }
+			input[type="range"] {
+				-webkit-appearance: none;
+				width: 100%;
+				margin: 4.15px 0;
+			}
 
-        input[type=range] {
-            -webkit-appearance: none;
-            width: 100%;
-            margin: 4.15px 0;
-        }
+			input[type="range"]:focus {
+				outline: none;
+			}
 
-        input[type=range]:focus {
-            outline: none;
-        }
+			input[type="range"]::-webkit-slider-runnable-track {
+				width: 100%;
+				height: 6.7px;
+				cursor: pointer;
+				box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+				background: #ffffff;
+				border-radius: 1.3px;
+				border: 0.2px solid #010101;
+			}
 
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 6.7px;
-            cursor: pointer;
-            box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-            background: #ffffff;
-            border-radius: 1.3px;
-            border: 0.2px solid #010101;
-        }
+			input[type="range"]::-webkit-slider-thumb {
+				box-shadow: 0.9px 0.9px 1px #000000, 0px 0px 0.9px #0d0d0d;
+				border: 1.1px solid #000000;
+				height: 15px;
+				width: 40px;
+				border-radius: 50px;
+				background: red;
+				cursor: pointer;
+				-webkit-appearance: none;
+				margin-top: -4.35px;
+			}
 
-        input[type=range]::-webkit-slider-thumb {
-            box-shadow: 0.9px 0.9px 1px #000000, 0px 0px 0.9px #0d0d0d;
-            border: 1.1px solid #000000;
-            height: 15px;
-            width: 40px;
-            border-radius: 50px;
-            background: red;
-            cursor: pointer;
-            -webkit-appearance: none;
-            margin-top: -4.35px;
-        }
+			input[type="range"]:focus::-webkit-slider-runnable-track {
+				background: #ffffff;
+			}
+		</style>
+	</head>
 
-        input[type=range]:focus::-webkit-slider-runnable-track {
-            background: #ffffff;
-        }
+	<body>
+		<script>
+			var sliderA;
+			var sliderW;
+			var sliderF;
 
-    </style>
-</head>
+			//y=A*sin((2*PI*x)/λ+ω)
 
-<body>
-    <script>
-        var sliderA;
-        var sliderW;
-        var sliderF;
+			let step = 0.1;
+			let totalWidthWave;
+			let frequency = 0.0;
+			let amplitude = 75.0;
+			let wavelength = 500.0;
+			let dx;
+			let yvalues;
 
-        //y=A*sin((2*PI*x)/λ+ω)
+			function setup() {
+				createCanvas(600, 600);
 
-        let step = 0.1;
-        let totalWidthWave;
-        let frequency = 0.0;
-        let amplitude = 75.0;
-        let wavelength = 500.0;
-        let dx;
-        let yvalues;
+				sliderA = createSlider(0, 200, 75, 1);
+				sliderA.position(25, 30);
+				sliderA.style("width", "250px");
 
-        function setup() {
-            createCanvas(600, 600);
+				sliderW = createSlider(1, 700, 600, 1);
+				sliderW.position(25, 80);
+				sliderW.style("width", "250px");
 
-            sliderA = createSlider(0, 200, 75, 1);
-            sliderA.position(25, 30);
-            sliderA.style('width', '250px');
-            
-            sliderW = createSlider(1, 700, 600, 1);
-            sliderW.position(25, 80);
-            sliderW.style('width', '250px');
-               
-            sliderF = createSlider(0, 1, 0, 0.01);
-            sliderF.position(25, 130);
-            sliderF.style('width', '250px');
-        }
+				sliderF = createSlider(0, 1, 0, 0.01);
+				sliderF.position(25, 130);
+				sliderF.style("width", "250px");
+			}
 
-        function draw() {
-            background(220);
+			function draw() {
+				background(220);
 
-            grid();
+				grid();
 
-            noStroke();
-            textSize(16);
-            
-            amplitude=sliderA.value();
-            text('Amplitude: '+amplitude, 30, 20);
-            
-            wavelength=sliderW.value();
-            text('Wavelength: '+wavelength, 30, 70);
-            
-            freqSlider=sliderF.value();
-            text('Angular frequency: '+freqSlider, 30, 120);
-            
-            calcWave();
-            renderWave();
-        }
+				noStroke();
+				textSize(16);
 
-        function grid() {
-            stroke('#000000');
-            fill('#000000');
-            strokeWeight(1);
+				amplitude = sliderA.value();
+				text("Amplitude: " + amplitude, 30, 20);
 
-            for (let i = 0; i < width; i += 30) {
-                line(i, 0, i, height);
-            }
+				wavelength = sliderW.value();
+				text("Wavelength: " + wavelength, 30, 70);
 
-            for (let j = 0; j < height; j += 30) {
-                line(0, j, width, j);
-            }
+				freqSlider = sliderF.value();
+				text("Angular frequency: " + freqSlider, 30, 120);
 
-            strokeWeight(3);
-            line(width / 2, 0, width / 2, height);
-            line(0, height / 2, width, height / 2);
-        }
+				calcWave();
+				renderWave();
+			}
 
-        function calcWave() {
-            totalWidthWave = width + 26;
-            dx = (TWO_PI / wavelength) * step;
-            yvalues = new Array(floor(totalWidthWave / step));
+			function grid() {
+				stroke("#000000");
+				fill("#000000");
+				strokeWeight(1);
 
-            frequency += freqSlider;
+				for (let i = 0; i < width; i += 30) {
+					line(i, 0, i, height);
+				}
 
-            let x = frequency;
-            for (let i = 0; i < yvalues.length; i++) {
-                yvalues[i] = sin(x) * amplitude;
-                x += dx;
-            }
-        }
+				for (let j = 0; j < height; j += 30) {
+					line(0, j, width, j);
+				}
 
-        function renderWave() {
-            noFill();
-            stroke("red");
-            beginShape();
-            for (let x = 0; x < yvalues.length; x += 1) {
-                vertex(x * step, height / 2 + yvalues[x]);
-            }
-            endShape();
-        }
+				strokeWeight(3);
+				line(width / 2, 0, width / 2, height);
+				line(0, height / 2, width, height / 2);
+			}
 
-    </script>
+			function calcWave() {
+				totalWidthWave = width + 26;
+				dx = (TWO_PI / wavelength) * step;
+				yvalues = new Array(floor(totalWidthWave / step));
 
-</body>
+				frequency += freqSlider;
 
+				let x = frequency;
+				for (let i = 0; i < yvalues.length; i++) {
+					yvalues[i] = sin(x) * amplitude;
+					x += dx;
+				}
+			}
+
+			function renderWave() {
+				noFill();
+				stroke("red");
+				beginShape();
+				for (let x = 0; x < yvalues.length; x += 1) {
+					vertex(x * step, height / 2 + yvalues[x]);
+				}
+				endShape();
+			}
+		</script>
+	</body>
 </html>

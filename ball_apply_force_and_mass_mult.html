@@ -1,180 +1,175 @@
 <!DOCTYPE html>
 <html>
+	<head>
+		<script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.js"></script>
+		<script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.js"></script>
+		<style>
+			body {
+				padding: 0;
+				margin: 0;
+			}
 
-<head>
-    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.js"></script>
-    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.js"></script>
-    <style>
-        body {
-            padding: 0;
-            margin: 0;
-        }
+			input[type="range"] {
+				-webkit-appearance: none;
+				width: 100%;
+				margin: 4.15px 0;
+			}
 
-        input[type=range] {
-            -webkit-appearance: none;
-            width: 100%;
-            margin: 4.15px 0;
-        }
+			input[type="range"]:focus {
+				outline: none;
+			}
 
-        input[type=range]:focus {
-            outline: none;
-        }
+			input[type="range"]::-webkit-slider-runnable-track {
+				width: 100%;
+				height: 6.7px;
+				cursor: pointer;
+				box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+				background: #ffffff;
+				border-radius: 1.3px;
+				border: 0.2px solid #010101;
+			}
 
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 6.7px;
-            cursor: pointer;
-            box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-            background: #ffffff;
-            border-radius: 1.3px;
-            border: 0.2px solid #010101;
-        }
+			input[type="range"]::-webkit-slider-thumb {
+				box-shadow: 0.9px 0.9px 1px #000000, 0px 0px 0.9px #0d0d0d;
+				border: 1.1px solid #000000;
+				height: 15px;
+				width: 40px;
+				border-radius: 50px;
+				background: red;
+				cursor: pointer;
+				-webkit-appearance: none;
+				margin-top: -4.35px;
+			}
 
-        input[type=range]::-webkit-slider-thumb {
-            box-shadow: 0.9px 0.9px 1px #000000, 0px 0px 0.9px #0d0d0d;
-            border: 1.1px solid #000000;
-            height: 15px;
-            width: 40px;
-            border-radius: 50px;
-            background: red;
-            cursor: pointer;
-            -webkit-appearance: none;
-            margin-top: -4.35px;
-        }
+			input[type="range"]:focus::-webkit-slider-runnable-track {
+				background: #ffffff;
+			}
+		</style>
+	</head>
 
-        input[type=range]:focus::-webkit-slider-runnable-track {
-            background: #ffffff;
-        }
+	<body>
+		<script>
+			let balls = [];
+			let path = [];
+			let numBalls = 1;
 
-    </style>
-</head>
+			var sliderM;
+			var sliderG;
+			var sliderW;
 
-<body>
-    <script>
-        let balls = [];
-        let path = [];
-        let numBalls = 1;
+			var M;
+			var G;
+			var W;
 
-        var sliderM;
-        var sliderG;
-        var sliderW;
+			function setup() {
+				createCanvas(700, 500);
 
-        var M;
-        var G;
-        var W;
+				sliderG = createSlider(0, 1, 0.1, 0.01);
+				sliderG.position(425, 30);
+				sliderG.style("width", "250px");
 
-        function setup() {
-            createCanvas(700, 500);
+				sliderW = createSlider(0, 1, 0.01, 0.01);
+				sliderW.position(425, 80);
+				sliderW.style("width", "250px");
 
-            sliderG = createSlider(0, 1, 0.1, 0.01);
-            sliderG.position(425, 30);
-            sliderG.style('width', '250px');
+				for (let i = 0; i < numBalls; i++) {
+					balls[i] = new Ball(i * 70 + 20, 50, (i + 1) * 20 + 1, (i + 1) * 20 + 1);
+				}
+			}
 
-            sliderW = createSlider(0, 1, 0.01, 0.01);
-            sliderW.position(425, 80);
-            sliderW.style('width', '250px');
+			function draw() {
+				background(0);
 
-            for (let i = 0; i < numBalls; i++) {
-                balls[i] = new Ball(i * 70 + 20, 50, (i+1) * 20+1, (i+1) * 20 + 1);
-            }
-        }
+				noStroke();
+				textSize(16);
+				fill("#ffffff");
 
-        function draw() {
-            background(0);
+				G = sliderG.value();
+				text("gravity: " + G, 430, 20);
 
-            noStroke();
-            textSize(16);
-            fill('#ffffff');
+				W = sliderW.value();
+				text("wind: " + W, 430, 70);
 
-            G = sliderG.value();
-            text('gravity: ' + G, 430, 20);
+				let wind = createVector(W, 0);
+				let gravity = createVector(0, G);
 
-            W = sliderW.value();
-            text('wind: ' + W, 430, 70);
+				for (let b of balls) {
+					b.update();
+					b.show();
+					b.applyForce(wind);
+					b.applyForce(gravity);
 
-            let wind = createVector(W, 0);
-            let gravity = createVector(0, G);
+					let c = 0.01;
+					let normal = 1;
+					let frictionMag = c * normal;
+					let friction = b.vel.copy();
+					friction.mult(-1);
+					friction.normalize();
+					friction.mult(frictionMag);
+					b.applyForce(friction);
+				}
 
-            for (let b of balls) {
-                b.update();
-                b.show();
-                b.applyForce(wind);
-                b.applyForce(gravity);
+				for (let i = 0; i < path.length; i++) {
+					if (path.length > 1500) {
+						path.splice(0, 1);
+					}
 
-                let c = 0.01;
-                let normal = 1;
-                let frictionMag = c * normal;
-                let friction = b.vel.copy();
-                friction.mult(-1);
-                friction.normalize();
-                friction.mult(frictionMag);
-                b.applyForce(friction);
-            }
+					noFill();
+					stroke(255);
+					point(path[i].x, path[i].y);
+				}
+			}
 
-            for (let i = 0; i < path.length; i++) {
-                if (path.length > 1500) {
-                    path.splice(0, 1);
-                }
+			class Ball {
+				constructor(x, y, r, m) {
+					this.pos = createVector(x, y);
+					this.vel = createVector(0, 0);
+					this.acc = createVector(0, 0);
+					this.r = r;
+					this.mass = m;
+				}
 
-                noFill();
-                stroke(255);
-                point(path[i].x, path[i].y);
-            }
-        }
+				applyForce(force, m) {
+					let f = p5.Vector.div(force, this.mass);
+					this.acc.add(f);
+				}
 
-        class Ball {
-            constructor(x, y, r, m) {
-                this.pos = createVector(x, y);
-                this.vel = createVector(0, 0);
-                this.acc = createVector(0, 0);
-                this.r = r;
-                this.mass = m;
-            }
+				update() {
+					this.vel.add(this.acc);
+					this.pos.add(this.vel);
 
-            applyForce(force, m) {
-                let f = p5.Vector.div(force, this.mass);
-                this.acc.add(f);
-            }
+					if (this.pos.x <= this.r || this.pos.x >= width - this.r) {
+						this.vel.x = -this.vel.x;
+					}
 
-            update() {
-                this.vel.add(this.acc);
-                this.pos.add(this.vel);
+					if (this.pos.y <= this.r || this.pos.y >= height - this.r) {
+						this.vel.y = -this.vel.y;
+					}
 
-                if (this.pos.x <= this.r || this.pos.x >= width - this.r) {
-                    this.vel.x = -this.vel.x
-                }
+					if (this.pos.y > height - this.r) {
+						this.pos.y = height - this.r;
+					}
 
-                if (this.pos.y <= this.r || this.pos.y >= height - this.r) {
-                    this.vel.y = -this.vel.y
-                }
+					if (path.length > 100 && path[path.length - 10].y == this.pos.y && path[path.length - 11].y == this.pos.y && path[path.length - 12].y == this.pos.y) {
+						this.acc.y = 0;
+						this.acc.x = 0;
+						this.vel.y = 0;
+						this.vel.x = 0;
+					} else {
+						path.push({
+							x: this.pos.x,
+							y: this.pos.y,
+						});
+					}
+				}
 
-                if (this.pos.y > height - this.r) {
-                    this.pos.y = height - this.r;
-                }
-
-                if (path.length > 100 && path[path.length - 10].y == this.pos.y && path[path.length - 11].y == this.pos.y && path[path.length - 12].y == this.pos.y) {
-                    this.acc.y = 0;
-                    this.acc.x = 0;
-                    this.vel.y = 0;
-                    this.vel.x = 0;
-                } else {
-                    path.push({
-                        x: this.pos.x,
-                        y: this.pos.y
-                    });
-                }
-            }
-
-            show() {
-                stroke(255);
-                strokeWeight(2);
-                fill(color(200, 200, 200, 80));
-                ellipse(this.pos.x, this.pos.y, this.r);
-            }
-        }
-
-    </script>
-
-</body>
-
+				show() {
+					stroke(255);
+					strokeWeight(2);
+					fill(color(200, 200, 200, 80));
+					ellipse(this.pos.x, this.pos.y, this.r);
+				}
+			}
+		</script>
+	</body>
 </html>

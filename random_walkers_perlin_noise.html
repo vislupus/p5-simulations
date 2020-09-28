@@ -1,114 +1,108 @@
 <!DOCTYPE html>
 <html>
+	<head>
+		<script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.js"></script>
+		<style>
+			body {
+				padding: 0;
+				margin: 0;
+			}
+		</style>
+	</head>
 
-<head>
-	<script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.js"></script>
-    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.js"></script>
-    <style>
-        body {
-            padding: 0;
-            margin: 0;
-        }
+	<body>
+		<script>
+			var w = [];
+			var array = [];
 
-    </style>
-</head>
+			let xoff = 0;
+			let yoff = 0;
 
-<body>
-    <script>
-        var w = [];
-        var array = [];
+			function setup() {
+				createCanvas(500, 400);
 
-        let xoff = 0;
-        let yoff = 0;
+				for (let i = 0; i < 10; i++) {
+					w[i] = new Walker();
+					w[i].num = i;
+					array.push([]);
+				}
 
-        function setup() {
-            createCanvas(500, 400);
+				// frameRate(10);
+			}
 
-            for (let i = 0; i < 10; i++) {
-                w[i] = new Walker();
-                w[i].num = i;
-                array.push([]);
-            }
+			function draw() {
+				background(150);
 
-            // frameRate(10);
-        }
+				for (let i = 0; i < w.length; i++) {
+					let nx = noise(w[i].xoff);
+					let x = map(nx, 0, 1, -1, 1);
+					w[i].xoff += w[i].step;
 
-        function draw() {
-            background(150);
+					let ny = noise(w[i].yoff);
+					let y = map(ny, 0, 1, -1, 1);
+					w[i].yoff += w[i].step;
 
-            for (let i = 0; i < w.length; i++) {
-                let nx = noise(w[i].xoff);
-                let x = map(nx, 0, 1, -1, 1);
-                w[i].xoff += w[i].step;
+					// console.log("x: " + x + "\ny: " + y)
 
-                let ny = noise(w[i].yoff);
-                let y = map(ny, 0, 1, -1, 1);
-                w[i].yoff += w[i].step;
+					w[i].update(x, y);
+					w[i].display();
+				}
 
-                // console.log("x: " + x + "\ny: " + y)
+				for (let i = 0; i < array.length; i++) {
+					noFill();
+					beginShape();
+					for (let j = 0; j < array[i].length; j++) {
+						if (array[i].length > 1000) {
+							array[i].splice(0, 1);
+						}
+						stroke(array[i][j].r, array[i][j].g, array[i][j].b);
 
-                w[i].update(x, y);
-                w[i].display();
-            }
+						vertex(array[i][j].x, array[i][j].y);
+					}
+					endShape();
+				}
+			}
 
+			function mousePressed() {
+				noLoop();
+			}
 
-            for (let i = 0; i < array.length; i++) {
-                noFill();
-                beginShape();
-                for (let j = 0; j < array[i].length; j++) {
-                    if(array[i].length>1000){
-                        array[i].splice(0,1);
-                    }
-                    stroke(array[i][j].r, array[i][j].g, array[i][j].b);
+			class Walker {
+				constructor() {
+					this.pos = createVector(random(50, width - 50), random(50, height - 50));
+					this.xoff = random(-1000, 1000);
+					this.yoff = random(-1000, 1000);
+					this.step = random(0.01, 0.02);
+					this.num = 0;
+					this.r = random(10, 255);
+					this.g = random(10, 255);
+					this.b = random(10, 255);
+				}
 
-                    vertex(array[i][j].x, array[i][j].y);
-                }
-                endShape();
-            }
-        }
+				update(x, y) {
+					//  this.vel = createVector(random(-5, 5), random(-5, 5));
+					this.vel = createVector(x, y);
 
-        function mousePressed() {
-            noLoop();
-        }
+					this.pos.add(this.vel);
 
-        class Walker {
-            constructor() {
-                this.pos = createVector(random(50, width - 50), random(50, height - 50));
-                this.xoff = random(-1000, 1000);
-                this.yoff = random(-1000, 1000);
-                this.step = random(0.01, 0.02);
-                this.num = 0;
-                this.r = random(10, 255);
-                this.g = random(10, 255);
-                this.b = random(10, 255);
-            }
+					array[this.num].push({
+						x: this.pos.x,
+						y: this.pos.y,
+						step: this.step,
+						xoff: this.xoff,
+						yoff: this.yoff,
+						r: this.r,
+						g: this.g,
+						b: this.b,
+					});
+				}
 
-            update(x, y) {
-                //  this.vel = createVector(random(-5, 5), random(-5, 5));
-                this.vel = createVector(x, y);
-
-                this.pos.add(this.vel);
-
-                array[this.num].push({
-                    x: this.pos.x,
-                    y: this.pos.y,
-                    step: this.step,
-                    xoff: this.xoff,
-                    yoff: this.yoff,
-                    r: this.r,
-                    g: this.g,
-                    b: this.b
-                });
-            }
-
-            display() {
-                stroke(0);
-                fill(this.r, this.g, this.b);
-                ellipse(this.pos.x, this.pos.y, 10, 10);
-            }
-        }
-    </script>
-
-</body>
-
+				display() {
+					stroke(0);
+					fill(this.r, this.g, this.b);
+					ellipse(this.pos.x, this.pos.y, 10, 10);
+				}
+			}
+		</script>
+	</body>
 </html>
