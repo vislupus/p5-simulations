@@ -24,7 +24,7 @@ Here are a few examples of the simulations you can find in this repository:
 | :---: | :---: | :---: |
 | [Harmonic oscillator](https://vislupus.github.io/p5-simulations/harmonic_oscillator.html) | [Damped harmonic oscillator](https://vislupus.github.io/p5-simulations/damped_harmonic_oscillator.html) | [Deposition of thin films](https://vislupus.github.io/p5-simulations/deposition.html) |
 
-| ![Exoplanet Exploration](screenshots/chrome_2023-08-17_15-33-08.png) | ![Brownian motion](screenshots/chrome_2023-08-17_16-00-08.png) | ![Fluid dynamics](screenshots/chrome_2023-08-17_16-00-19.png) |
+| ![Exoplanet Exploration](screenshots/chrome_2023-08-17_15-33-08.png) | ![Brownian motion](screenshots/chrome_2023-08-17_15-59-19.png) | ![Fluid dynamics](screenshots/chrome_2023-08-17_16-00-19.png) |
 | :---: | :---: | :---: |
 | [Exoplanet Exploration](https://vislupus.github.io/p5-simulations/exoplanet.html) | [Brownian motion](https://vislupus.github.io/p5-simulations/brownian_motion.html) | [Fluid dynamics](https://vislupus.github.io/p5-simulations/fluid_dynamics.html) |
 
