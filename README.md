@@ -12,7 +12,7 @@ The inspiration for many of these simulations comes from the brilliant work of [
 
 Here are a few examples of the simulations you can find in this repository:
 
-| ![Random walkers](screenshots/chrome_2023-08-17_08-17-54.png) | ![Random walkers with Perlin noise](screenshots/chrome_2023-08-17_08-21-21.png) | ![Applying forces to a ball with mass](screenshots/chrome_2023-08-17_09-41-40.png) |
+| ![Random walkers](screenshots/chrome_2023-08-17_08-17-54.png) | ![Random walkers with Perlin noise](screenshots/chrome_2023-08-17_08-21-21.png) | ![Applying forces to a ball with mass](screenshots/chrome_2023-08-17_15-58-03.png) |
 | :---: | :---: | :---: |
 | [Random walkers](https://vislupus.github.io/p5-simulations/random_walkers.html) | [Random walkers with Perlin noise](https://vislupus.github.io/p5-simulations/random_walkers_perlin_noise.html) | [Applying forces to a ball with mass](https://vislupus.github.io/p5-simulations/ball_apply_force_and_mass_mult.html) |
 
@@ -24,9 +24,9 @@ Here are a few examples of the simulations you can find in this repository:
 | :---: | :---: | :---: |
 | [Harmonic oscillator](https://vislupus.github.io/p5-simulations/harmonic_oscillator.html) | [Damped harmonic oscillator](https://vislupus.github.io/p5-simulations/damped_harmonic_oscillator.html) | [Deposition of thin films](https://vislupus.github.io/p5-simulations/deposition.html) |
 
-| ![Exoplanet Exploration](screenshots/chrome_2023-08-17_15-33-08.png) | ![](screenshots/) | ![](screenshots/) |
+| ![Exoplanet Exploration](screenshots/chrome_2023-08-17_15-33-08.png) | ![Brownian motion](screenshots/chrome_2023-08-17_16-00-08.png) | ![Fluid dynamics](screenshots/chrome_2023-08-17_16-00-19.png) |
 | :---: | :---: | :---: |
-| [Exoplanet Exploration](https://vislupus.github.io/p5-simulations/exoplanet.html) | []() | []() |
+| [Exoplanet Exploration](https://vislupus.github.io/p5-simulations/exoplanet.html) | [Brownian motion](https://vislupus.github.io/p5-simulations/brownian_motion.html) | [Fluid dynamics](https://vislupus.github.io/p5-simulations/fluid_dynamics.html) |
 
 Feel free to explore these examples and more in the repository! To run a simulation locally, follow these steps:
 
