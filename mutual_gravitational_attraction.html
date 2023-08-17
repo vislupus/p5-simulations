@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.js"></script>
+</head>
+
+<body>
+    <script>
+        let balls = [];
+        let numBalls = 100;
+        let vel = 3;
+        let sliderG, sliderU, sliderD;
+
+        function setup() {
+            createCanvas(900, 600);
+            
+            sliderG = createSlider(0, 30, 5, 0.1);
+            sliderG.position(10, 10);
+            sliderG.style('width', '380px');
+
+            sliderU = createSlider(1000, 1000000, 100000, 1);
+            sliderU.position(10, 30);
+            sliderU.style('width', '380px');
+
+            sliderD = createSlider(0, 1000, 100, 1);
+            sliderD.position(10, 50);
+            sliderD.style('width', '380px');
+
+            for (let i = 0; i < numBalls; i++) {
+                balls[i] = new Ball(random(20, width - 20), random(20, height - 20), 1, random(-vel, vel), random(-vel, vel));
+            }
+        }
+
+        function draw() {
+            background(0);
+            
+            noStroke();
+            fill(255);
+            text(`${sliderG.value()}`, 400, 18);
+            text(`${sliderU.value()}`, 400, 38);
+            text(`${sliderD.value()}`, 400, 58);
+
+            if (balls.length >= 1) {
+                for (let [ib, b] of balls.entries()) {
+                    for (let [io, other] of balls.entries()) {
+
+                        if (b !== other) {
+
+                            b.attract(other);
+
+                            if (dist(b.pos.x, b.pos.y, other.pos.x, other.pos.y) < (b.r + other.r)) {
+
+                                let centerM = barycenter(b.pos.x, b.pos.y, other.pos.x, other.pos.y, b.mass, other.mass);
+
+                                let am = b.mass + other.mass;
+
+                                //Momentum
+                                let bp = b.vel.copy().mult(b.mass);
+                                let op = other.vel.copy().mult(other.mass);
+                                let ap = bp.add(op);
+
+                                let av = ap.div(am);
+
+                                balls.splice(ib, 1);
+
+                                if (ib < io) {
+                                    balls.splice(io - 1, 1);
+                                } else {
+                                    balls.splice(io, 1);
+                                }
+
+                                balls.push(new Ball(centerM.x, centerM.y, am, av.x, av.y));
+
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            let posRX = 0;
+            let posRY = 0;
+            let massR = 0;
+
+            for (let b of balls) {
+                b.update();
+                b.edges();
+                b.paths();
+
+                for (let i = 0; i < b.path.length; i++) {
+                    if (b.path.length > 200) {
+                        b.path.splice(0, 1);
+                    }
+
+                    noFill();
+                    strokeWeight(2);
+                    stroke(b.color, 50);
+                    point(b.path[i].x, b.path[i].y);
+                }
+
+                b.show();
+
+                posRX += b.mass * b.pos.x;
+                posRY += b.mass * b.pos.y;
+                massR += b.mass;
+            }
+
+            let cmSystem = createVector(posRX / massR, posRY / massR);
+            
+            stroke(255)
+            line(cmSystem.x, cmSystem.y - 5, cmSystem.x, cmSystem.y + 5);
+            line(cmSystem.x - 5, cmSystem.y, cmSystem.x + 5, cmSystem.y);
+        }
+
+        function barycenter(x1, y1, x2, y2, m1, m2) {
+            let d = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+            let r1 = d / (1 + (m1 / m2));
+            let r2 = d - r1;
+
+            let slope = (y2 - y1) / (x2 - x1);
+            let theta = Math.atan(slope);
+
+            let bc;
+            if (x1 > x2) {
+                let x = x1 - r1 * Math.cos(theta);
+                let y = y1 - r1 * Math.sin(theta);
+
+                bc = createVector(x, y);
+            } else {
+                let x = x1 + r1 * Math.cos(theta);
+                let y = y1 + r1 * Math.sin(theta);
+
+                bc = createVector(x, y);
+            }
+
+            return bc;
+        }
+
+        class Ball {
+            constructor(x, y, m, vx, vy) {
+                this.pos = createVector(x, y);
+                this.vel = createVector(vx, vy);
+                this.acc = createVector(0, 0);
+                this.mass = m;
+                this.r = sqrt(this.mass) * 2;
+                this.color = color(`hsla(${parseInt(random(0,360))}, 100%, 50%, 1)`);
+                this.path = [];
+            }
+
+            applyForce(force) {
+                let f = p5.Vector.div(force, this.mass);
+                this.acc.add(f);
+            }
+
+            drawArrow(showColor, size, f) {
+                if (f.x != 0 || f.y != 0) {
+                    push();
+                    stroke(color(showColor));
+                    fill(color(showColor));
+                    translate(this.pos.x, this.pos.y);
+                    line(0, 0, f.x * size, f.y * size);
+                    rotate(f.heading());
+                    translate(f.mag() * size, 0);
+                    let arrowSize = 7;
+                    triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+                    pop();
+                }
+            }
+
+            attract(ball) {
+                let force = p5.Vector.sub(this.pos, ball.pos);
+                let distanceSq = constrain(force.magSq(), sliderD.value(), sliderU.value());
+                let G = sliderG.value();
+                let strength = G * (this.mass * ball.mass) / distanceSq;
+                force.setMag(strength);
+
+                ball.applyForce(force);
+            }
+
+            update() {
+                this.vel.add(this.acc);
+                this.vel.limit(10);
+
+                this.pos.add(this.vel);
+                this.acc.set(0, 0);
+
+                //                if (this.vel.x !== 0 || this.vel.y !== 0 && this.vel.y !== 1) {
+                //                    this.drawArrow('#ffff33', 5, this.vel);
+                //                }
+            }
+
+            edges() {
+                if (this.pos.x <= this.r || this.pos.x >= width - this.r) {
+                    this.vel.x = -this.vel.x
+                }
+
+                if (this.pos.y <= this.r || this.pos.y >= height - this.r) {
+                    this.vel.y = -this.vel.y
+                }
+
+
+                if (this.pos.x > width - this.r) {
+                    this.pos.x = width - this.r;
+                }
+
+                if (this.pos.x < this.r) {
+                    this.pos.x = this.r;
+                }
+
+                if (this.pos.y > height - this.r) {
+                    this.pos.y = height - this.r;
+                }
+
+                if (this.pos.y < this.r) {
+                    this.pos.y = this.r;
+                }
+            }
+
+            paths() {
+                this.path.push({
+                    x: this.pos.x,
+                    y: this.pos.y
+                });
+            }
+
+            show() {
+                noStroke();
+                fill(this.color, 80);
+                ellipse(this.pos.x, this.pos.y, this.r * 2);
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>

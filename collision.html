@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.js"></script>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+    </style>
+</head>
+
+<body>
+    <script>
+        let particles = [];
+        let numParticles = 30;
+        let vel = 5;
+
+        function setup() {
+            createCanvas(950, 600);
+            frameRate(15);
+
+            for (let i = 0; i < numParticles; i++) {
+                let x = random(50, width - 50);
+                let y = random(50, height - 50);
+                let vx = random(-vel, vel);
+                let vy = random(-vel, vel);
+                let m = random(10, 150);
+                particles[i] = new Particle(x, y, m, i, vx, vy);
+            }
+        }
+
+        function draw() {
+            background(0);
+
+            for (let [i, p] of particles.entries()) {
+                p.collide();
+                p.update();
+                p.edges();
+                p.show();
+            }
+        }
+
+
+        class Particle {
+            constructor(x, y, m, id, vx, vy) {
+                this.pos = createVector(x, y);
+                this.vel = createVector(vx, vy);
+                this.acc = createVector(0, 0);
+                this.id = id;
+                this.mass = m;
+                this.r = sqrt(this.mass) * 2;
+            }
+
+            drawArrow(showColor, size, f) {
+                if (f.x != 0 || f.y != 0) {
+                    push();
+                    stroke(color(showColor));
+                    fill(color(showColor));
+                    translate(this.pos.x, this.pos.y);
+                    line(0, 0, f.x * size, f.y * size);
+                    rotate(f.heading());
+                    translate(f.mag() * size, 0);
+                    let arrowSize = 7;
+                    triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+                    pop();
+                }
+            }
+
+            update() {
+                this.vel.add(this.acc);
+                this.pos.add(this.vel);
+                this.acc.set(0, 0);
+
+                if (this.vel.x !== 0 || this.vel.y !== 0 && this.vel.y !== 1) {
+                    this.drawArrow('#ffff33', 5, this.vel);
+                }
+
+            }
+
+            edges() {
+                if (this.pos.x <= this.r || this.pos.x >= width - this.r) {
+                    this.vel.x = -this.vel.x
+                }
+
+                if (this.pos.x > width - this.r) {
+                    this.pos.x = width - this.r;
+                }
+
+                if (this.pos.x < this.r) {
+                    this.pos.x = this.r;
+                }
+
+
+                if (this.pos.y <= this.r || this.pos.y >= height - this.r) {
+                    this.vel.y = -this.vel.y
+                }
+
+                if (this.pos.y > height - this.r) {
+                    this.pos.y = height - this.r;
+                }
+
+                if (this.pos.y < this.r) {
+                    this.pos.y = this.r;
+                }
+            }
+
+            collide() {
+                for (var i = this.id + 1; i < numParticles; i++) {
+                    //                    if (abs((this.pos.x - particles[i].pos.x) * (this.pos.x - particles[i].pos.x) + (this.pos.y - particles[i].pos.y) * (this.pos.y - particles[i].pos.y)) <= (this.r + particles[i].r) * (this.r + particles[i].r)) {
+                    if (this.pos.x + this.r + particles[i].r > particles[i].pos.x &&
+                        this.pos.x < particles[i].pos.x + this.r + particles[i].r &&
+                        this.pos.y + this.r + particles[i].r > particles[i].pos.y &&
+                        this.pos.y < particles[i].pos.y + this.r + particles[i].r) {
+
+                        //                        let distance = Math.sqrt(((this.pos.x - particles[i].pos.x) ** 2) + ((this.pos.y - particles[i].pos.y) ** 2));
+                        let distance = dist(this.pos.x, this.pos.y, particles[i].pos.x, particles[i].pos.y);
+                        let minDist = particles[i].r + this.r;
+
+                        if (distance <= minDist) {
+                            stroke(color('red'));
+                            strokeWeight(2);
+                            line(this.pos.x, this.pos.y, particles[i].pos.x, particles[i].pos.y);
+
+                            //                            Collision point
+                            let collisionPointX = ((this.pos.x * particles[i].r) + (particles[i].pos.x * this.r)) / (this.r + particles[i].r);
+
+                            let collisionPointY = ((this.pos.y * particles[i].r) + (particles[i].pos.y * this.r)) / (this.r + particles[i].r);
+
+                            noStroke();
+                            fill(color(0, 102, 255));
+                            ellipse(collisionPointX, collisionPointY, 10);
+
+
+
+                            let overlap = 0.5 * (distance - this.r - particles[i].r);
+
+                            this.pos.x -= overlap * (this.pos.x - particles[i].pos.x) / distance;
+                            this.pos.y -= overlap * (this.pos.y - particles[i].pos.y) / distance;
+
+                            particles[i].pos.x += overlap * (this.pos.x - particles[i].pos.x) / distance;
+                            particles[i].pos.y += overlap * (this.pos.y - particles[i].pos.y) / distance;
+
+
+                            //https://ericleong.me/research/circle-circle/
+                            let dx = particles[i].pos.x - this.pos.x;
+                            let dy = particles[i].pos.y - this.pos.y;
+
+                            let dvx = this.vel.x - particles[i].vel.x;
+                            let dvy = this.vel.y - particles[i].vel.y;
+
+                            // Normal
+                            let nx = dx / minDist;
+                            let ny = dy / minDist;
+
+                            let p = 2 * (nx * dvx + ny * dvy) / (this.mass + particles[i].mass);
+
+                            this.vel.x -= p * particles[i].mass * nx;
+                            this.vel.y -= p * particles[i].mass * ny;
+                            this.vel.limit(vel)
+
+                            particles[i].vel.x += p * this.mass * nx;
+                            particles[i].vel.y += p * this.mass * ny;
+                            particles[i].vel.limit(vel)
+                        }
+                    }
+
+                }
+            }
+
+            show() {
+                stroke(255);
+                strokeWeight(2);
+                fill(color(200, 200, 200, 80));
+                ellipse(this.pos.x, this.pos.y, this.r * 2);
+
+                //                fill(255);
+                //                textSize(15);
+                //                textAlign(CENTER, CENTER);
+                //                strokeWeight(1);
+                //                text(this.id, this.pos.x, this.pos.y);
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>

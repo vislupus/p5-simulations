@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.js"></script>
+</head>
+
+<body>
+    <script>
+        let balls = [];
+        let numBalls = 10;
+        let attractors = [];
+        let vel = 3;
+
+        function setup() {
+            createCanvas(900, 600);
+
+            for (let i = 0; i < numBalls; i++) {
+                balls[i] = new Ball(random(width), random(height), 3, random(-vel, vel), random(-vel, vel));
+            }
+
+            for (let i = 0; i < 3; i++) {
+                attractors[i] = new Attractor(random(width - 150), random(height - 150), 100, 'plus');
+            }
+        }
+
+        function draw() {
+            background(0);
+
+            for (let [i, b] of balls.entries()) {
+                b.update();
+                b.edges();
+                b.paths();
+                b.show();
+
+                for (let i = 0; i < b.path.length; i++) {
+                    if (b.path.length > 1000) {
+                        b.path.splice(0, 1);
+                    }
+
+                    noFill();
+                    strokeWeight(2);
+                    stroke(b.color, 50);
+                    point(b.path[i].x, b.path[i].y);
+                }
+                
+                for (let [i, a] of attractors.entries()) {
+                    a.show();
+                    a.attract(b);
+                }
+            }
+        }
+
+        function mouseClicked() {            
+            if (keyCode === UP_ARROW) {
+                attractors.push(new Attractor(mouseX, mouseY, 100, "plus"));
+            } else if (keyCode === DOWN_ARROW) {
+                attractors.push(new Attractor(mouseX, mouseY, 100, "minus"));
+            }else if (keyCode === LEFT_ARROW) {
+                balls.push(new Ball(mouseX, mouseY, 10, random(-5, 0), random(-5, 5)));
+            }else if (keyCode === RIGHT_ARROW) {
+                balls.push(new Ball(mouseX, mouseY, 10, random(0, 5), random(-5, 5)));
+            }
+        }
+
+        class Ball {
+            constructor(x, y, m, vx, vy) {
+                this.pos = createVector(x, y);
+                this.vel = createVector(vx, vy);
+                this.acc = createVector(0, 0);
+                this.mass = m;
+                this.r = sqrt(this.mass) * 2;
+                this.color = color(random(10, 215), random(10, 215), random(10, 215));
+                this.path = [];
+            }
+
+            applyForce(force) {
+                let f = p5.Vector.div(force, this.mass);
+                this.acc.add(f);
+            }
+
+            drawArrow(showColor, size, f) {
+                if (f.x != 0 || f.y != 0) {
+                    push();
+                    stroke(color(showColor));
+                    fill(color(showColor));
+                    translate(this.pos.x, this.pos.y);
+                    line(0, 0, f.x * size, f.y * size);
+                    rotate(f.heading());
+                    translate(f.mag() * size, 0);
+                    let arrowSize = 7;
+                    triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+                    pop();
+                }
+            }
+
+            update() {
+                this.vel.add(this.acc);
+                this.pos.add(this.vel);
+                this.acc.set(0, 0);
+
+                if (this.vel.x !== 0 || this.vel.y !== 0 && this.vel.y !== 1) {
+                    this.drawArrow('#ffff33', 5, this.vel);
+                }
+            }
+
+            edges() {
+                if (this.pos.x <= this.r || this.pos.x >= width - this.r) {
+                    this.vel.x = -this.vel.x
+                }
+
+                if (this.pos.y <= this.r || this.pos.y >= height - this.r) {
+                    this.vel.y = -this.vel.y
+                }
+
+
+                if (this.pos.x > width - this.r) {
+                    this.pos.x = width - this.r;
+                }
+
+                if (this.pos.x < this.r) {
+                    this.pos.x = this.r;
+                }
+
+                if (this.pos.y > height - this.r) {
+                    this.pos.y = height - this.r;
+                }
+
+                if (this.pos.y < this.r) {
+                    this.pos.y = this.r;
+                }
+            }
+
+            paths() {
+                this.path.push({
+                    x: this.pos.x,
+                    y: this.pos.y
+                });
+            }
+
+            show() {
+                stroke(255);
+                strokeWeight(1);
+                fill(this.color, 80);
+                ellipse(this.pos.x, this.pos.y, this.r * 2);
+            }
+        }
+
+        class Attractor {
+            constructor(x, y, m, s) {
+                this.pos = createVector(x, y);
+                this.mass = m;
+                this.r = sqrt(this.mass) * 2;
+                this.sign = s;
+                this.color = color(255, 0, 100);
+            }
+
+            attract(ball) {
+                let force = p5.Vector.sub(this.pos, ball.pos);
+                let distanceSq = constrain(force.magSq(), 100, 100000);
+                let G = 5;
+                let strength = G * (this.mass * ball.mass) / distanceSq;
+                force.setMag(strength);
+
+                if (this.sign == "minus") {
+                    force.mult(-1);
+                    this.color = color(51, 204, 51);
+                }
+
+                ball.applyForce(force);
+            }
+
+            show() {
+                noStroke();
+                fill(this.color);
+                ellipse(this.pos.x, this.pos.y, this.r * 2);
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.js"></script>
+    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.dom.js"></script>
+
+
+</head>
+
+<body>
+    <script>
+        //        https://nssdc.gsfc.nasa.gov/planetary/factsheet/
+        //        https://en.wikipedia.org/wiki/Sun
+        //        https://fiftyexamples.readthedocs.io/en/latest/gravity.html
+        //        https://github.com/techwithtim/Python-Planet-Simulation/blob/main/tutorial.py
+        //        https://science.nasa.gov/science-news/science-at-nasa/2001/ast04jan_1
+
+        let AU = 149.598e6 * 1000;
+        let G = 6.67430e-11; // The gravitational constant G
+        let SCALE = 200 / AU; // 1 AU = 100 pixels
+        let TIMESTEP = 3600 * 24; // 1 day
+        let centerX, centerY;
+        let planets, sun, earth, mars, mercury, venus;
+
+        function setup() {
+            createCanvas(900, 630);
+
+            sun = new Planet(0, "Sun", 0, 0, 696342 * SCALE * 1e4 + 15, 1.98892e30, 'yellow', 0, 0);
+            sun.sun = true;
+
+            mercury = new Planet(1, "Mercury", -0.467 * AU, 0, 2440.5 * SCALE * 1e6, 3.30e23, '#669999', 0, 38.86 * 1000, 88);
+            venus = new Planet(2, "Venus", -0.728 * AU, 0, 6051.8 * SCALE * 1e6, 4.8675e24, '#e68a00', 0, 34.79 * 1000, 225);
+            earth = new Planet(3, "Earth", -1.02 * AU, 0, 6378.137 * SCALE * 1e6, 5.97237e24, '#0086b3', 0, 29.29 * 1000, 366);
+            mars = new Planet(4, "Mars", -1.666 * AU, 0, 3396.2 * SCALE * 1e6, 6.39e23, '#e60000', 0, 21.97 * 1000, 687);
+
+            planets = [sun, mercury, venus, earth, mars];
+
+            centerX = width / 2 + 150;
+            centerY = height / 2;
+        }
+
+        function draw() {
+            background(0);
+
+            for (let [i, p] of planets.entries()) {
+                p.update();
+                p.show();
+            }
+
+            fill(255);
+            noStroke();
+            textSize(16);
+            text(`${frameRate().toFixed(1)} fps`, width - 60, 20);
+            
+//            noLoop()
+        }
+
+
+        class Planet {
+            constructor(num, name, x, y, r, m, c, vx, vy, n) {
+                this.pos = createVector(x, y);
+                this.vel = createVector(vx, vy);
+                this.acc = createVector(0, 0);
+                this.mass = m;
+                this.radius = r;
+                this.color = color(c);
+                this.orbit = [];
+                this.orbitN = n;
+                this.aphelion = 0;
+                this.perihelion = 0;
+                this.avg_dis = x;
+                this.sun = false;
+                this.distance_to_sun = 0;
+                this.name = name;
+                this.num = num;
+                this.v_max = 0;
+                this.v_min = 0;
+            }
+
+            attraction(self, other) {
+                let distance_x = other.pos.x - self.pos.x;
+                let distance_y = other.pos.y - self.pos.y;
+                let distance = sqrt(distance_x ** 2 + distance_y ** 2);
+
+                if (other.sun) {
+                    self.distance_to_sun = distance;
+
+                    if (self.distance_to_sun < self.perihelion || self.perihelion == 0) {
+                        self.perihelion = self.distance_to_sun;
+                    }
+
+                    if (self.distance_to_sun > self.aphelion) {
+                        self.aphelion = self.distance_to_sun;
+                    }
+                }
+
+                let force = G * (self.mass * other.mass) / distance ** 2;
+                let theta = atan2(distance_y, distance_x);
+                let force_x = cos(theta) * force;
+                let force_y = sin(theta) * force;
+                return {
+                    x: force_x,
+                    y: force_y
+                };
+            }
+
+            update() {
+                for (let planet of planets) {
+                    if (this != planet) {
+                        let force = this.attraction(this, planet);
+
+                        this.acc.add(force.x, force.y);
+                    }
+                }
+
+                this.vel.add(this.acc.div(this.mass).mult(TIMESTEP));
+                this.pos.add(this.vel.copy().mult(TIMESTEP));
+                this.acc.set(0, 0);
+
+                this.orbits();
+
+
+                this.velocity = sqrt(this.vel.x ** 2 + this.vel.y ** 2) / 1000
+
+                if (this.velocity < this.v_min || this.v_min == 0) {
+                    this.v_min = this.velocity;
+                }
+
+                if (this.velocity > this.v_max) {
+                    this.v_max = this.velocity;
+                }
+            }
+
+            orbits() {
+                this.orbit.push({
+                    x: this.pos.x,
+                    y: this.pos.y
+                });
+            }
+
+            show() {
+                noStroke();
+                fill(this.color, 80);
+                ellipse(
+                    this.pos.x * SCALE + centerX,
+                    this.pos.y * SCALE + centerY,
+                    this.radius * 2);
+
+                if (this.num != 0) {
+                    textSize(14);
+                    text(`${this.name}: ${(this.distance_to_sun/AU).toFixed(3)} AU`, 10, this.num * 110 + 20 - 110);
+                    text(`Perihelion: ${(this.perihelion/AU).toFixed(3)} AU`, 10, this.num * 110 + 35 - 110);
+                    text(`Aphelion: ${(this.aphelion/AU).toFixed(3)} AU`, 10, this.num * 110 + 50 - 110);
+                    text(`Orbital velocity: ${(this.velocity).toFixed(3)} km/s`, 10, this.num * 110 + 65 - 110);
+                    text(`Max. orbital velocity: ${this.v_max.toFixed(3)} km/s`, 10, this.num * 110 + 80 - 110);
+                    text(`Min. orbital velocity: ${this.v_min.toFixed(3)} km/s`, 10, this.num * 110 + 95 - 110);
+                    text(`Eccentricity: ${(1-2/((this.v_max/this.v_min)+1)).toFixed(4)}`, 10, this.num * 110 + 110 - 110);
+                }
+
+
+
+                for (let i = 0; i < this.orbit.length; i++) {
+                    if (this.orbit.length > this.orbitN) {
+                        this.orbit.splice(0, 1);
+                    }
+
+                    noFill();
+                    strokeWeight(2);
+                    stroke(this.color, 50);
+                    point(
+                        this.orbit[i].x * SCALE + centerX,
+                        this.orbit[i].y * SCALE + centerY);
+                }
+            }
+        }
+    </script>
+
+</body></html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.js"></script>
+</head>
+
+<body>
+    <script>
+        let balls = [];
+        let numBalls = 100;
+        let attractor;
+        let vel = 10;
+
+        function setup() {
+            createCanvas(800, 600);
+
+            for (let i = 0; i < numBalls; i++) {
+                balls[i] = new Ball(random(width), random(height), 3, random(-vel, vel), random(-vel, vel));
+            }
+
+            attractor = new Attractor(width / 2, height / 2, 100);
+        }
+
+        function draw() {
+            background(0);
+
+            for (let [i, b] of balls.entries()) {
+                b.update();
+                b.paths();
+                b.show();
+
+                attractor.attract(b);
+
+                for (let i = 0; i < b.path.length; i++) {
+                    if (b.path.length > 1000) {
+                        b.path.splice(0, 1);
+                    }
+
+                    noFill();
+                    strokeWeight(2);
+                    stroke(b.color, 50);
+                    point(b.path[i].x, b.path[i].y);
+                }
+
+                attractor.remove(b, i);
+
+                if (balls.length >= 1) {
+                    for (let [im, m] of balls.entries()) {
+                        if (dist(b.pos.x, b.pos.y, m.pos.x, m.pos.y) < b.r + m.r && i != im) {
+                            let ax = (b.pos.x + m.pos.x) / 2;
+                            let ay = (b.pos.y + m.pos.y) / 2;
+                            let am = (b.mass + m.mass) * 0.75;
+                            //                            let avx = (b.vel.x + m.vel.x) / 2;
+                            //                            let avy = (b.vel.y + m.vel.y) / 2;
+
+                            let av = b.vel;
+                            av.add(m.vel);
+
+                            //                            let avx = 0;
+                            //                            let avy = 0;
+                            //                            b.vel.x = 0;
+                            //                            b.vel.y = 0;
+                            //                            m.vel.x = 0;
+                            //                            m.vel.y = 0;
+
+                            balls.splice(i, 1);
+                            if (i < im) {
+                                balls.splice(im - 1, 1);
+                            } else {
+                                balls.splice(im, 1);
+                            }
+
+                            balls.push(new Ball(ax, ay, am, av.x, av.y));
+
+                            break;
+                        }
+                    }
+                }
+            }
+
+            attractor.show();
+        }
+
+        function mouseClicked() {
+            balls.push(new Ball(mouseX, mouseY, 10, random(-5, 5), random(-5, 5)));
+            //            balls.push(new Ball(mouseX, mouseY, 10, 2, 2));
+        }
+
+        class Ball {
+            constructor(x, y, m, vx, vy) {
+                this.pos = createVector(x, y);
+                this.vel = createVector(vx, vy);
+                this.acc = createVector(0, 0);
+                this.mass = m;
+                this.r = sqrt(this.mass) * 2;
+                this.color = color(random(100, 255), random(100, 255), random(100, 255));
+                this.path = [];
+            }
+
+            applyForce(force) {
+                let f = p5.Vector.div(force, this.mass);
+
+                this.drawArrow('#66ff33', 30, f);
+
+                this.acc.add(f);
+            }
+
+            drawArrow(showColor, size, f) {
+                if (f.x != 0 || f.y != 0) {
+                    push();
+                    stroke(color(showColor));
+                    fill(color(showColor));
+                    translate(this.pos.x, this.pos.y);
+                    line(0, 0, f.x * size, f.y * size);
+                    rotate(f.heading());
+                    translate(f.mag() * size, 0);
+                    let arrowSize = 7;
+                    triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+                    pop();
+                }
+            }
+
+            update() {
+                this.vel.add(this.acc);
+                this.pos.add(this.vel);
+                this.acc.set(0, 0);
+
+                if (this.vel.x !== 0 || this.vel.y !== 0 && this.vel.y !== 1) {
+                    this.drawArrow('#ffff33', 5, this.vel);
+                }
+            }
+
+            paths() {
+                this.path.push({
+                    x: this.pos.x,
+                    y: this.pos.y
+                });
+            }
+
+            show() {
+                stroke(255);
+                strokeWeight(1);
+                fill(this.color, 80);
+                ellipse(this.pos.x, this.pos.y, this.r * 2);
+            }
+        }
+
+        class Attractor {
+            constructor(x, y, m) {
+                this.pos = createVector(x, y);
+                this.mass = m;
+                this.r = sqrt(this.mass) * 2;
+            }
+
+            attract(ball) {
+                let force = p5.Vector.sub(this.pos, ball.pos);
+                let distanceSq = constrain(force.magSq(), 100, 10000);
+                let G = 5;
+                let strength = G * (this.mass * ball.mass) / distanceSq;
+                force.setMag(strength);
+                ball.applyForce(force);
+            }
+
+            remove(ball, id) {
+                if (dist(this.pos.x, this.pos.y, ball.pos.x, ball.pos.y) < this.r) {
+                    balls.splice(id, 1);
+
+                    this.mass += ball.mass;
+                    this.r = sqrt(this.mass) * 2;
+                }
+            }
+
+            show() {
+                noStroke();
+                fill(255, 0, 100);
+                ellipse(this.pos.x, this.pos.y, this.r * 2);
+            }
+        }
+    </script>
+
+</body></html>

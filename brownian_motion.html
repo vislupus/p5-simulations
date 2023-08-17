@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.js"></script>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+    </style>
+</head>
+
+<body>
+    <script>
+        let particles = [];
+        let numParticles = 1000;
+
+        function setup() {
+            createCanvas(950, 600);
+
+            for (let i = 0; i < numParticles; i++) {
+                let x = random(50, width - 50);
+                let y = random(50, height - 50);
+
+                let limit = 10;
+                let m = random(1, 3);
+                let type = 'particle';
+
+                if (random(0, 10) > 9.9) {
+                    m = random(150, 200);
+                    limit = 2;
+                    type = 'pollen';
+                }
+
+                let vx = random(-limit, limit);
+                let vy = random(-limit, limit);
+
+                particles[i] = new Particle(x, y, m, i, vx, vy, limit, type);
+            }
+        }
+
+        function draw() {
+            background(0);
+
+            for (let [i, p] of particles.entries()) {
+                p.collide();
+                p.update();
+                p.edges();
+
+                if (p.type === 'pollen') {
+                    p.paths();
+
+                    for (let i = 0; i < p.path.length; i++) {
+                        if (p.path.length > 1000) {
+                            p.path.splice(0, 1);
+                        }
+
+                        noFill();
+                        strokeWeight(2);
+                        stroke(p.color);
+                        point(p.path[i].x, p.path[i].y);
+                    }
+                }
+
+                p.show();
+            }
+        }
+
+
+        class Particle {
+            constructor(x, y, m, id, vx, vy, limit, type) {
+                this.pos = createVector(x, y);
+                this.vel = createVector(vx, vy);
+                this.acc = createVector(0, 0);
+                this.id = id;
+                this.mass = m;
+                this.r = sqrt(this.mass) * 2;
+                this.limit = limit;
+                this.type = type;
+
+                if (this.type === 'pollen') {
+                    this.path = [];
+                    this.color = color(`hsla(${parseInt(random(0,360))}, 100%, 50%, 0.3)`);
+                }
+            }
+
+            update() {
+                this.vel.add(this.acc);
+                this.pos.add(this.vel);
+                this.acc.set(0, 0);
+            }
+
+            edges() {
+                if (this.pos.x <= this.r || this.pos.x >= width - this.r) {
+                    this.vel.x = -this.vel.x
+                }
+
+                if (this.pos.x > width - this.r) {
+                    this.pos.x = width - this.r;
+                }
+
+                if (this.pos.x < this.r) {
+                    this.pos.x = this.r;
+                }
+
+
+                if (this.pos.y <= this.r || this.pos.y >= height - this.r) {
+                    this.vel.y = -this.vel.y
+                }
+
+                if (this.pos.y > height - this.r) {
+                    this.pos.y = height - this.r;
+                }
+
+                if (this.pos.y < this.r) {
+                    this.pos.y = this.r;
+                }
+            }
+
+            collide() {
+                for (var i = this.id + 1; i < numParticles; i++) {
+                    if (this.type === 'pollen' || particles[i].type === 'pollen') {
+                        if (this.pos.x + this.r + particles[i].r > particles[i].pos.x &&
+                            this.pos.x < particles[i].pos.x + this.r + particles[i].r &&
+                            this.pos.y + this.r + particles[i].r > particles[i].pos.y &&
+                            this.pos.y < particles[i].pos.y + this.r + particles[i].r) {
+
+                            let distance = dist(this.pos.x, this.pos.y, particles[i].pos.x, particles[i].pos.y);
+                            let minDist = particles[i].r + this.r;
+
+                            if (distance <= minDist) {
+
+                                stroke(color('red'));
+                                strokeWeight(2);
+                                line(this.pos.x, this.pos.y, particles[i].pos.x, particles[i].pos.y);
+
+                                let overlap = 0.5 * (distance - this.r - particles[i].r);
+
+                                this.pos.x -= overlap * (this.pos.x - particles[i].pos.x) / distance;
+                                this.pos.y -= overlap * (this.pos.y - particles[i].pos.y) / distance;
+
+                                particles[i].pos.x += overlap * (this.pos.x - particles[i].pos.x) / distance;
+                                particles[i].pos.y += overlap * (this.pos.y - particles[i].pos.y) / distance;
+
+
+                                let dx = particles[i].pos.x - this.pos.x;
+                                let dy = particles[i].pos.y - this.pos.y;
+
+                                let dvx = this.vel.x - particles[i].vel.x;
+                                let dvy = this.vel.y - particles[i].vel.y;
+
+                                let nx = dx / minDist;
+                                let ny = dy / minDist;
+
+                                let p = 2 * (nx * dvx + ny * dvy) / (this.mass + particles[i].mass);
+
+                                this.vel.x -= p * particles[i].mass * nx;
+                                this.vel.y -= p * particles[i].mass * ny;
+                                this.vel.limit(this.limit)
+
+                                particles[i].vel.x += p * this.mass * nx;
+                                particles[i].vel.y += p * this.mass * ny;
+                                particles[i].vel.limit(this.limit)
+                            }
+                        }
+                    }
+                }
+            }
+
+            paths() {
+                this.path.push({
+                    x: this.pos.x,
+                    y: this.pos.y
+                });
+            }
+
+            show() {
+
+
+                if (this.type === 'pollen') {
+                    noStroke()
+                    fill(this.color);
+                } else {
+                    noStroke()
+                    fill(color(255, 255, 255, 80));
+                }
+
+                ellipse(this.pos.x, this.pos.y, this.r * 2);
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>
