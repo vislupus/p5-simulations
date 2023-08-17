@@ -51,18 +51,6 @@ This repository is licensed under the [MIT License](LICENSE). You are free to us
 We would like to express our gratitude to [Daniel Shiffman](http://twitter.com/shiffman) for his invaluable contributions to the coding community and for inspiring the simulations in this repository. Additionally, we would like to thank the p5.js community for their continuous support and the developers behind the p5.js library for providing such a powerful and accessible tool.
 
 <!--
-- [Random walkers](https://vislupus.github.io/p5-simulations/random_walkers.html)
-- [Random walkers with Perlin noise](https://vislupus.github.io/p5-simulations/random_walkers_perlin_noise.html)
-- [Applying forces to a ball with mass](https://vislupus.github.io/p5-simulations/ball_apply_force_and_mass_mult.html)
-- [Cannonball shooting](https://vislupus.github.io/p5-simulations/ball_cannon.html)
-- [Sound wave](https://vislupus.github.io/p5-simulations/sound_wave.html)
-- [Standing wave](https://vislupus.github.io/p5-simulations/standing_wave.html)
-- [Harmonic oscillator](https://vislupus.github.io/p5-simulations/harmonic_oscillator.html)
-- [Damped harmonic oscillator](https://vislupus.github.io/p5-simulations/damped_harmonic_oscillator.html)
-- [Deposition of thin films](https://vislupus.github.io/p5-simulations/deposition.html)
-- [Exoplanet Exploration](https://vislupus.github.io/p5-simulations/exoplanet.html)
-
-
 | ![](screenshots/) | ![](screenshots/) | ![](screenshots/) |
 | :---: | :---: | :---: |
 | []() | []() | []() |
