@@ -20,6 +20,14 @@ Here are a few examples of the simulations you can find in this repository:
 | :---: | :---: | :---: |
 | [Cannonball shooting](https://vislupus.github.io/p5-simulations/ball_cannon.html) | [Sound wave](https://vislupus.github.io/p5-simulations/sound_wave.html) | [Standing wave](https://vislupus.github.io/p5-simulations/standing_wave.html) |
 
+| ![Harmonic oscillator](screenshots/chrome_2023-08-17_15-34-16.png) | ![Damped harmonic oscillator](screenshots/chrome_2023-08-17_15-34-06.png) | ![Deposition of thin films](screenshots/chrome_2023-08-17_15-33-54.png) |
+| :---: | :---: | :---: |
+| [Harmonic oscillator](https://vislupus.github.io/p5-simulations/harmonic_oscillator.html) | [Damped harmonic oscillator](https://vislupus.github.io/p5-simulations/damped_harmonic_oscillator.html) | [Deposition of thin films](https://vislupus.github.io/p5-simulations/deposition.html) |
+
+| ![Exoplanet Exploration](screenshots/chrome_2023-08-17_15-33-08.png) | ![](screenshots/) | ![](screenshots/) |
+| :---: | :---: | :---: |
+| [Exoplanet Exploration](https://vislupus.github.io/p5-simulations/exoplanet.html) | []() | []() |
+
 Feel free to explore these examples and more in the repository! To run a simulation locally, follow these steps:
 
 1. Clone this repository to your local machine:
@@ -55,7 +63,7 @@ We would like to express our gratitude to [Daniel Shiffman](http://twitter.com/s
 - [Exoplanet Exploration](https://vislupus.github.io/p5-simulations/exoplanet.html)
 
 
-| [![](screenshots/)]() | [![](screenshots/)]() | [![](screenshots/)]() |
+| ![](screenshots/) | ![](screenshots/) | ![](screenshots/) |
 | :---: | :---: | :---: |
 | []() | []() | []() |
 -->
