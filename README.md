@@ -24,7 +24,7 @@ Feel free to explore these examples and more in the repository! To run a simulat
 
 1. Clone this repository to your local machine:
 ```
-git clone https://github.com/your-username/simulations-with-p5js.git
+git clone https://github.com/vislupus/p5-simulations.git
 ```
 2. Navigate to the specific simulation you are interested in.
 
