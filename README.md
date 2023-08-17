@@ -1,8 +1,48 @@
 # Simulations with p5.js
-This repository contains a variety of simulations of a different topics built with p5.js.
 
-Inspiration for most of them came from the work of [Daniel Shiffman](http://twitter.com/shiffman) and his channel on Youtube call [The Coding Train](https://www.youtube.com/channel/UCvjgXvBlbQiydffZU7m1_aw).
+## About
 
+This repository showcases a diverse range of captivating simulations, all built using the powerful [p5.js](https://p5js.org/) library.
+
+This collection features interactive simulations covering a wide array of fascinating topics. Each simulation is meticulously crafted to provide an engaging and immersive experience.
+
+The inspiration for many of these simulations comes from the brilliant work of [Daniel Shiffman](http://twitter.com/shiffman) and his incredible YouTube channel, [The Coding Train](https://www.youtube.com/channel/UCvjgXvBlbQiydffZU7m1_aw). Through his tutorials and creative coding projects, Daniel has inspired countless developers and artists to explore the exciting world of coding.
+
+## Examples
+
+Here are a few examples of the simulations you can find in this repository:
+
+| ![Random walkers](screenshots/chrome_2023-08-17_08-17-54.png) | ![Random walkers with Perlin noise](screenshots/chrome_2023-08-17_08-21-21.png) | ![Applying forces to a ball with mass](screenshots/chrome_2023-08-17_09-41-40.png) |
+| :---: | :---: | :---: |
+| [Random walkers](https://vislupus.github.io/p5-simulations/random_walkers.html) | [Random walkers with Perlin noise](https://vislupus.github.io/p5-simulations/random_walkers_perlin_noise.html) | [Applying forces to a ball with mass](https://vislupus.github.io/p5-simulations/ball_apply_force_and_mass_mult.html) |
+
+| ![Cannonball shooting](screenshots/chrome_2023-08-17_09-45-47.png) | ![Sound wave](screenshots/chrome_2023-08-17_09-46-06.png) | ![Standing wave](screenshots/chrome_2023-08-17_09-46-35.png) |
+| :---: | :---: | :---: |
+| [Cannonball shooting](https://vislupus.github.io/p5-simulations/ball_cannon.html) | [Sound wave](https://vislupus.github.io/p5-simulations/sound_wave.html) | [Standing wave](https://vislupus.github.io/p5-simulations/standing_wave.html) |
+
+Feel free to explore these examples and more in the repository! To run a simulation locally, follow these steps:
+
+1. Clone this repository to your local machine:
+```
+git clone https://github.com/your-username/simulations-with-p5js.git
+```
+2. Navigate to the specific simulation you are interested in.
+
+3. Open the corresponding HTML file in your web browser.
+
+## Contribution
+
+We welcome contributions from the community to enhance this collection of simulations. If you have an idea for a new simulation or an improvement to an existing one, please feel free to submit a pull request. Together, we can make this repository an even richer resource for learning and creativity.
+
+## License
+
+This repository is licensed under the [MIT License](LICENSE). You are free to use the code and adapt it for your own projects.
+
+## Acknowledgements
+
+We would like to express our gratitude to [Daniel Shiffman](http://twitter.com/shiffman) for his invaluable contributions to the coding community and for inspiring the simulations in this repository. Additionally, we would like to thank the p5.js community for their continuous support and the developers behind the p5.js library for providing such a powerful and accessible tool.
+
+<!--
 - [Random walkers](https://vislupus.github.io/p5-simulations/random_walkers.html)
 - [Random walkers with Perlin noise](https://vislupus.github.io/p5-simulations/random_walkers_perlin_noise.html)
 - [Applying forces to a ball with mass](https://vislupus.github.io/p5-simulations/ball_apply_force_and_mass_mult.html)
@@ -15,15 +55,6 @@ Inspiration for most of them came from the work of [Daniel Shiffman](http://twit
 - [Exoplanet Exploration](https://vislupus.github.io/p5-simulations/exoplanet.html)
 
 
-| ![Random walkers](screenshots/chrome_2023-08-17_08-17-54.png) | ![Random walkers with Perlin noise](screenshots/chrome_2023-08-17_08-21-21.png) | ![Applying forces to a ball with mass](screenshots/chrome_2023-08-17_09-41-40.png) |
-| :---: | :---: | :---: |
-| [Random walkers](https://vislupus.github.io/p5-simulations/random_walkers.html) | [Random walkers with Perlin noise](https://vislupus.github.io/p5-simulations/random_walkers_perlin_noise.html) | [Applying forces to a ball with mass](https://vislupus.github.io/p5-simulations/ball_apply_force_and_mass_mult.html) |
-
-| ![Cannonball shooting](screenshots/chrome_2023-08-17_09-45-47.png) | ![Sound wave](screenshots/chrome_2023-08-17_09-46-06.png) | ![Standing wave](screenshots/chrome_2023-08-17_09-46-35.png) |
-| :---: | :---: | :---: |
-| [Cannonball shooting](https://vislupus.github.io/p5-simulations/ball_cannon.html) | [Sound wave](https://vislupus.github.io/p5-simulations/sound_wave.html) | [Standing wave](https://vislupus.github.io/p5-simulations/standing_wave.html) |
-
-<!--
 | [![](screenshots/)]() | [![](screenshots/)]() | [![](screenshots/)]() |
 | :---: | :---: | :---: |
 | []() | []() | []() |
