@@ -16,17 +16,17 @@ Here are a few examples of the simulations you can find in this repository:
 | :---: | :---: | :---: |
 | [Random walkers](https://vislupus.github.io/p5-simulations/random_walkers.html) | [Random walkers with Perlin noise](https://vislupus.github.io/p5-simulations/random_walkers_perlin_noise.html) | [Deposition of thin films](https://vislupus.github.io/p5-simulations/deposition.html) |
 
-| ![Cannonball shooting](screenshots/chrome_2023-08-17_09-45-47.png) | ![](screenshots/) | ![](screenshots/) |
+| ![Cannonball shooting](screenshots/chrome_2023-08-17_09-45-47.png) | ![Applying forces to a ball with mass](screenshots/chrome_2023-08-17_15-58-03.png) | ![](screenshots/) |
 | :---: | :---: | :---: |
-| []() | []() | []() |
+| [Cannonball shooting](https://vislupus.github.io/p5-simulations/ball_cannon.html) | [Applying forces to a ball with mass](https://vislupus.github.io/p5-simulations/ball_apply_force_and_mass_mult.html) | []() |
 
 | ![Sound wave](screenshots/chrome_2023-08-17_09-46-06.png) | ![Standing wave](screenshots/chrome_2023-08-17_09-46-35.png) | ![Harmonic oscillator](screenshots/chrome_2023-08-17_15-34-16.png) | ![Damped harmonic oscillator](screenshots/chrome_2023-08-17_15-34-06.png) |
 | :---: | :---: | :---: | :---: |
 | [Sound wave](https://vislupus.github.io/p5-simulations/sound_wave.html) | [Standing wave](https://vislupus.github.io/p5-simulations/standing_wave.html) | [Harmonic oscillator](https://vislupus.github.io/p5-simulations/harmonic_oscillator.html) | [Damped harmonic oscillator](https://vislupus.github.io/p5-simulations/damped_harmonic_oscillator.html) |
 
-|  |  | ![Applying forces to a ball with mass](screenshots/chrome_2023-08-17_15-58-03.png) |
+|  |  |  |
 | :---: | :---: | :---: |
-|  |  | [Applying forces to a ball with mass](https://vislupus.github.io/p5-simulations/ball_apply_force_and_mass_mult.html) |
+|  |  |  |
 
 | ![Exoplanet Exploration](screenshots/chrome_2023-08-17_15-33-08.png) | ![Brownian motion](screenshots/chrome_2023-08-17_15-59-19.png) | ![Fluid dynamics](screenshots/chrome_2023-08-17_16-00-19.png) |
 | :---: | :---: | :---: |
