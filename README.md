@@ -28,6 +28,14 @@ Here are a few examples of the simulations you can find in this repository:
 | :---: | :---: | :---: |
 | [Exoplanet Exploration](https://vislupus.github.io/p5-simulations/exoplanet.html) | [Brownian motion](https://vislupus.github.io/p5-simulations/brownian_motion.html) | [Fluid dynamics](https://vislupus.github.io/p5-simulations/fluid_dynamics.html) |
 
+<!-- | ![](screenshots/) | ![](screenshots/) | ![](screenshots/) |
+| :---: | :---: | :---: |
+| [](https://vislupus.github.io/p5-simulations/mutual_gravitational_attraction.html) | [](https://vislupus.github.io/p5-simulations/solar_system.html) | [](https://vislupus.github.io/p5-simulations/collision.html) |
+
+| ![](screenshots/) | ![](screenshots/) | ![](screenshots/) |
+| :---: | :---: | :---: |
+| [](https://vislupus.github.io/p5-simulations/multiple_gravitational_attractors.html) | [](https://vislupus.github.io/p5-simulations/gravitational_attraction.html) | [](https://vislupus.github.io/p5-simulations/wheel_of_fortune.html) | -->
+
 Feel free to explore these examples and more in the repository! To run a simulation locally, follow these steps:
 
 1. Clone this repository to your local machine:

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.1/p5.js"></script>
+</head>
+
+<body>
+    <script>
+        let centerX, centerY, arrow;
+        let sectors = [];
+        let sectorsN = 10;
+        const sectorAngle = 360 / sectorsN;
+        let angleStart = 0;
+        let angleStop = 0;
+        let begin = true;
+
+        function setup() {
+            createCanvas(900, 600);
+            angleMode(DEGREES);
+            rectMode(CENTER);
+
+            centerX = width / 2;
+            centerY = height / 2;
+
+            arrow = new Arrow(centerX, centerY, -90);
+
+            for (let i = 0; i < sectorsN; i++) {
+                sectors[i] = new Sector(centerX, centerY, i * sectorAngle);
+            }
+        }
+
+        function draw() {
+            background(0);
+
+            stroke(255);
+            strokeWeight(1);
+            noFill();
+            ellipse(centerX, centerY, centerY * 1.7);
+
+            for (let s of sectors) {
+                s.draw();
+            }
+
+            arrow.update();
+            arrow.overlap();
+            arrow.draw();
+
+            strokeWeight(10);
+            point(centerX, centerY);
+        }
+
+
+        function mousePressed() {
+            let mouseAngle = atan2(mouseY - centerY, mouseX - centerX);
+            angleStart = realAngle(mouseAngle);
+        }
+
+        function mouseReleased() {
+            let mouseAngle = atan2(mouseY - centerY, mouseX - centerX);
+            angleStop = realAngle(mouseAngle);
+
+            if (begin && angleStart >= 350 && angleStop < 180) {
+                angleStart = 0;
+                begin = false;
+            } else if (begin && angleStart <= 10 && angleStop > 180) {
+                angleStart += 360;
+                begin = false;
+            }
+
+            let diffAngles = angleStop - angleStart;
+//            console.log(angleStart, angleStop, diffAngles)
+            arrow.changeAcceleration(diffAngles / 10);
+        }
+
+        function mouseDragged() {
+            let mouseAngle = atan2(mouseY - centerY, mouseX - centerX);
+
+            arrow.changeAngle(mouseAngle);
+        }
+
+        function realAngle(angle) {
+            if (angle > 270) {
+                return ((angle + 90) % 360);
+            } else {
+                if (angle >= -90 && angle <= 180) {
+                    return ((angle + 90) % 360);
+                } else if (angle > -360 && angle < -90) {
+                    return (270 + (180 + angle));
+                } else if (angle <= -360) {
+                    if (Math.sign(angle) === -1) {
+                        return angle % 360;
+                    }
+                    return angle % 360;
+                } else if (angle > 180 && angle < 270) {
+                    return (270 + (angle - 180));
+                }
+            }
+        }
+
+        class Arrow {
+            constructor(x, y, angle) {
+                this.pos = createVector(x, y);
+                this.angle = angle;
+                this.angleV = 0;
+                this.angleA = 0;
+                this.force = 0;
+                this.realAngle = realAngle(angle);
+                this.sign = 1;
+            }
+
+            update() {
+                if (this.angleA !== 0) {
+                    this.angleV = this.angleA;
+
+                    if (this.angleA > -0.1 && this.angleA < 0.1) {
+                        this.angleA = 0;
+                    } else {
+                        this.angleA += 0.1 * (this.sign * -1);
+                    }
+
+                    this.angle += this.angleV;
+
+                    if (this.angle < -360) {
+                        this.angle %= 360;
+                    }
+                }
+            }
+
+            changeAngle(angle) {
+                this.angle = angle;
+            }
+
+            changeAcceleration(val) {
+                this.angleA = val;
+                this.sign = Math.sign(val);
+            }
+
+            overlap() {
+                this.realAngle = realAngle(this.angle);
+                let curSector = parseInt(this.realAngle / sectorAngle);
+
+//                console.log(curSector, this.realAngle, this.angle)
+
+                for (let [i, s] of sectors.entries()) {
+                    if (s.alpha === 70 && i !== curSector) {
+                        sectors[i].changeColor(10);
+                    }
+                }
+
+                if (this.realAngle > 0) {
+                    sectors[curSector].changeColor(70);
+                }
+            }
+
+            draw() {
+                push();
+                translate(this.pos);
+                rotate(this.angle);
+
+                noStroke();
+                fill(150, 255);
+                rect(0, 0, this.pos.y * 1.3, 20);
+                triangle(this.pos.y * 0.648, -25, this.pos.y * 0.648, 25, this.pos.y * 0.8, 0);
+                ellipse(-this.pos.x * 0.48, 0, 50);
+
+                pop();
+            }
+        }
+
+
+        class Sector {
+            constructor(x, y, angle) {
+                this.pos = createVector(x, y);
+                this.angle = angle;
+                this.alpha = 10;
+            }
+
+            changeColor(alpha) {
+                this.alpha = alpha;
+            }
+
+            draw() {
+                push();
+                translate(this.pos);
+                rotate(270);
+
+                fill(255, this.alpha);
+                arc(0, 0, this.pos.y * 1.7, this.pos.y * 1.7, this.angle, this.angle + sectorAngle, PIE);
+
+                pop();
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>
