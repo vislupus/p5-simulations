@@ -36,6 +36,12 @@ Here are a few examples of the simulations you can find in this repository:
 | :---: | :---: | :---: |
 | [Multiple gravitational attractors](https://vislupus.github.io/p5-simulations/multiple_gravitational_attractors.html) | [Gravitational attraction](https://vislupus.github.io/p5-simulations/gravitational_attraction.html) | [Mutual gravitational attraction](https://vislupus.github.io/p5-simulations/mutual_gravitational_attraction.html) |
 
+<!--
+| ![](screenshots/) | ![](screenshots/) | ![](screenshots/) |
+| :---: | :---: | :---: |
+| []() | []() | []() |
+-->
+
 Feel free to explore these examples and more in the repository! To run a simulation locally, follow these steps:
 
 1. Clone this repository to your local machine:
@@ -57,9 +63,3 @@ This repository is licensed under the [MIT License](LICENSE). You are free to us
 ## Acknowledgements
 
 We would like to express our gratitude to [Daniel Shiffman](http://twitter.com/shiffman) for his invaluable contributions to the coding community and for inspiring the simulations in this repository. Additionally, we would like to thank the p5.js community for their continuous support and the developers behind the p5.js library for providing such a powerful and accessible tool.
-
-<!--
-| ![](screenshots/) | ![](screenshots/) | ![](screenshots/) |
-| :---: | :---: | :---: |
-| []() | []() | []() |
--->
