@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.js"></script>
+    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.dom.js"></script>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+    </style>
+</head>
+
+<body>
+    <script>
+        const AU = 149.598e6 * 1000;
+        const G = 6.67430e-11;
+        let SCALE = 100 / AU; // 1 AU = 100 pixels
+        let SCALE_DIS, SCALE_SIZE;
+        const TIMESTEP = 3600;
+        let centerX, centerY, sliderScale, sliderMoonsSize;
+        let objects, jupiter, io, europa, ganymede, callisto;
+
+        function setup() {
+            createCanvas(900, 630);
+            //            frameRate(10)
+
+            sliderScale = createSlider(20, 100, 22, 1);
+            sliderScale.position(10, height - 20);
+            sliderScale.style('width', '875px');
+
+            jupiter = new Planet(0,"Jupiter", 0, 0, 71492 * 1000, 1.8982e27, '#ccccff', 0, 0);
+            jupiter.center = true;
+
+            io = new Planet(1,"Io", -423400 * 1000, 0, 1821.6 * 1000, 8.931938e22, '#e6b800', 0, 17.334 * 1000, 44);
+
+            europa = new Planet(2,"Europa", -676938 * 1000, 0, 1560.8 * 1000, 4.799844e22, '#3399ff', 0, 13.74336 * 1000, 88);
+
+            ganymede = new Planet(3,"Ganymede", -1071600 * 1000, 0, 2634.1 * 1000, 1.4819e23, '#669999', 0, 10.880 * 1000, 172);
+            //
+            callisto = new Planet(4,"Callisto", -1897000 * 1000, 0, 2410.3 * 1000, 1.075938e23, '#9933ff', 0, 8.204 * 1000, 412);
+
+            objects = [jupiter, io, europa, ganymede, callisto];
+            //            objects = [jupiter, europa];
+
+            centerX = width / 2 + 150;
+            centerY = height / 2;
+        }
+
+        function draw() {
+            background(0);
+
+            SCALE = sliderScale.value() / AU;
+            SCALE_DIS = SCALE * 10 ** 3;
+            SCALE_SIZE = SCALE * 10 ** 3;
+
+            for (let [i, p] of objects.entries()) {
+                if (i !== 0) {
+                    p.update(i);
+                }
+
+                p.show();
+            }
+
+            fill(255);
+            noStroke();
+            textSize(16);
+            text(`${frameRate().toFixed(1)} fps`, width - 60, 20);
+            text(`${frameCount}`, width - 60, 50);
+
+            //            if (frameCount > 3) {
+            //                noLoop();
+            //            }
+        }
+
+
+        class Planet {
+            constructor(num, name, x, y, r, m, c, vx, vy, n) {
+                this.pos = createVector(x, y);
+                this.vel = createVector(vx, vy);
+                this.acc = createVector(0, 0);
+                this.mass = m;
+                this.radius = r;
+                this.color = color(c);
+                this.orbit = [];
+                this.orbitN = n;
+                this.aphelion = 0;
+                this.perihelion = 0;
+                this.avg_dis = x;
+                this.center = false;
+                this.distance_to_center = 0;
+                this.name = name;
+                this.num = num;
+                this.v_max = 0;
+                this.v_min = 0;
+            }
+
+            attraction(other) {
+                let distance_x = other.pos.x - this.pos.x;
+                let distance_y = other.pos.y - this.pos.y;
+                let distance = sqrt(distance_x ** 2 + distance_y ** 2);
+
+                if (other.center) {
+                    this.distance_to_center = distance;
+
+                    if (this.distance_to_center < this.perihelion || this.perihelion == 0) {
+                        this.perihelion = this.distance_to_center;
+                    }
+
+                    if (this.distance_to_center > this.aphelion) {
+                        this.aphelion = this.distance_to_center;
+                    }
+                }
+
+                let force = G * (this.mass * other.mass) / distance ** 2;
+                let theta = atan2(distance_y, distance_x);
+                let force_x = cos(theta) * force;
+                let force_y = sin(theta) * force;
+
+                return {
+                    x: force_x,
+                    y: force_y
+                };
+            }
+
+            update(num) {
+                for (let [i, obj] of objects.entries()) {
+                    if (this !== obj) {
+                        let force = this.attraction(obj);
+
+                        this.acc.add(force.x, force.y);
+                    }
+                }
+
+                this.vel.add(this.acc.div(this.mass).mult(TIMESTEP));
+                this.pos.add(this.vel.copy().mult(TIMESTEP));
+                this.acc.set(0, 0);
+
+                this.orbits();
+
+
+                this.velocity = sqrt(this.vel.x ** 2 + this.vel.y ** 2) / 1000
+
+                if (this.velocity < this.v_min || this.v_min == 0) {
+                    this.v_min = this.velocity;
+                }
+
+                if (this.velocity > this.v_max) {
+                    this.v_max = this.velocity;
+                }
+            }
+
+            orbits() {
+                this.orbit.push({
+                    x: this.pos.x,
+                    y: this.pos.y
+                });
+            }
+
+            show() {
+                noStroke();
+                fill(this.color, 80);
+
+                let moonScale = 1;
+                if (!this.center) {
+                    moonScale = 10;
+                }
+
+                ellipse(
+                    this.pos.x * SCALE_DIS + centerX,
+                    this.pos.y * SCALE_DIS + centerY,
+                    this.radius * 2 * SCALE_SIZE * moonScale);
+
+                if (this.num != 0) {
+                    textSize(14);
+                    text(`${this.name}: ${(this.distance_to_center/1000).toFixed(2)} km`, 10, this.num * 125 + 20 - 125);
+                    text(`Perihelion: ${(this.perihelion/1000).toFixed(2)} km`, 10, this.num * 125 + 35 - 125);
+                    text(`Aphelion: ${(this.aphelion/1000).toFixed(2)} km`, 10, this.num * 125 + 50 - 125);
+                    text(`Orbital velocity: ${(this.velocity).toFixed(2)} km/s`, 10, this.num * 125 + 65 - 125);
+                    text(`Avg. orbital velocity: ${((this.v_max+this.v_min)/2).toFixed(3)} km/s`, 10, this.num * 125 + 80 - 125);
+                    text(`Max. orbital velocity: ${this.v_max.toFixed(2)} km/s`, 10, this.num * 125 + 95 - 125);
+                    text(`Min. orbital velocity: ${this.v_min.toFixed(2)} km/s`, 10, this.num * 125 + 110 - 125);
+                    text(`Eccentricity: ${(1-2/((this.v_max/this.v_min)+1)).toFixed(5)}`, 10, this.num * 125 + 125 - 125);
+                }
+
+
+
+                for (let i = 0; i < this.orbit.length; i++) {
+                    if (this.orbit.length > this.orbitN) {
+                        this.orbit.splice(0, 1);
+                    }
+
+                    noFill();
+                    strokeWeight(2);
+                    stroke(this.color, 50);
+                    point(
+                        this.orbit[i].x * SCALE_DIS + centerX,
+                        this.orbit[i].y * SCALE_DIS + centerY);
+                }
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>
