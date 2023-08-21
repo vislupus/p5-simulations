@@ -28,11 +28,11 @@ Here are a few examples of the simulations you can find in this repository:
 | :---: | :---: | :---: |
 | [Exoplanet Exploration](https://vislupus.github.io/p5-simulations/exoplanet.html) | [Brownian motion](https://vislupus.github.io/p5-simulations/brownian_motion.html) | [Fluid dynamics](https://vislupus.github.io/p5-simulations/fluid_dynamics.html) |
 
-| ![](screenshots/chrome_2023-08-17_15-59-02.png) | ![](screenshots/chrome_2023-08-17_16-00-35.png) | ![](screenshots/chrome_2023-08-17_16-00-08.png) |
+| ![](screenshots/chrome_2023-08-17_16-01-02.png) | ![](screenshots/chrome_2023-08-17_16-00-35.png) | ![](screenshots/chrome_2023-08-17_16-00-08.png) |
 | :---: | :---: | :---: |
 | [Mutual gravitational attraction](https://vislupus.github.io/p5-simulations/mutual_gravitational_attraction.html) | [Solar system](https://vislupus.github.io/p5-simulations/solar_system.html) | [Collision](https://vislupus.github.io/p5-simulations/collision.html) |
 
-| ![](screenshots/chrome_2023-08-17_16-01-02.png) | ![](screenshots/chrome_2023-08-17_15-58-17.png) | ![](screenshots/chrome_2023-08-21_15-56-09.png) |
+| ![](screenshots/chrome_2023-08-17_15-59-02.png) | ![](screenshots/chrome_2023-08-17_15-58-17.png) | ![](screenshots/chrome_2023-08-21_15-56-09.png) |
 | :---: | :---: | :---: |
 | [Multiple gravitational attractors](https://vislupus.github.io/p5-simulations/multiple_gravitational_attractors.html) | [Gravitational attraction](https://vislupus.github.io/p5-simulations/gravitational_attraction.html) | [Wheel of fortune](https://vislupus.github.io/p5-simulations/wheel_of_fortune.html) |
 
