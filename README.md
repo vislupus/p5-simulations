@@ -24,9 +24,9 @@ Here are a few examples of the simulations you can find in this repository:
 | :---: | :---: | :---: | :---: |
 | [Sound wave](https://vislupus.github.io/p5-simulations/sound_wave.html) | [Standing wave](https://vislupus.github.io/p5-simulations/standing_wave.html) | [Harmonic oscillator](https://vislupus.github.io/p5-simulations/harmonic_oscillator.html) | [Damped harmonic oscillator](https://vislupus.github.io/p5-simulations/damped_harmonic_oscillator.html) |
 
-| ![Solar system](screenshots/chrome_2023-08-17_16-00-35.png) | ![Exoplanet Exploration](screenshots/chrome_2023-08-17_15-33-08.png) |  |
+| ![Solar system](screenshots/chrome_2023-08-17_16-00-35.png) | ![Jupiter system](screenshots/chrome_2023-08-21_16-22-57.png) | ![Exoplanet Exploration](screenshots/chrome_2023-08-17_15-33-08.png) |
 | :---: | :---: | :---: |
-| [Solar system](https://vislupus.github.io/p5-simulations/solar_system.html) | [Exoplanet Exploration](https://vislupus.github.io/p5-simulations/exoplanet.html) |  |
+| [Solar system](https://vislupus.github.io/p5-simulations/solar_system.html) | [Jupiter system](https://vislupus.github.io/p5-simulations/jupiter_system.html) | [Exoplanet Exploration](https://vislupus.github.io/p5-simulations/exoplanet.html) |
 
 | ![Collision](screenshots/chrome_2023-08-17_16-00-08.png) | ![Brownian motion](screenshots/chrome_2023-08-17_15-59-19.png) | ![Fluid dynamics](screenshots/chrome_2023-08-17_16-00-19.png) |
 | :---: | :---: | :---: |
